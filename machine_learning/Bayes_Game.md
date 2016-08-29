@@ -34,6 +34,3 @@ We should switch to the left one!
 
 
 
-
-
-
