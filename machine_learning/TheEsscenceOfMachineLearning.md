@@ -10,3 +10,6 @@ cost function: $$E = \frac{1}{2}(X\omega-y)^2\\
 \nabla E$$
 
 #概率与逆概率 （probability & inverse probability）
+
+
+

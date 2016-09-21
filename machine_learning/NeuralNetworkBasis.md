@@ -32,7 +32,9 @@ SGD — Stochastic Gradient Descent
 
 
 ###Moment  
-Weight decay(regularization item)
+
+
+###Weight decay(regularization item)
 
 
 
