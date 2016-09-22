@@ -36,8 +36,6 @@ SGD — Stochastic Gradient Descent
 
 ###Weight decay(regularization item)
 
-
-
 #What is deep learning
 gradient diffusion
 
@@ -51,3 +49,39 @@ gradient diffusion
 
 #Latest Methods:  
 ##Dropout
+
+
+
+#神经网络加速的4个层次
+这都是从各个层次寻找平衡，达到业务目标的过程
+##数据层
+对数据预处理，例如数据降采样；这牺牲了数据信息表达度，也是牺牲了后续的模型精度
+##模型层
+简化训练模型，牺牲模型精度；例如削减神经网络节点数，或者增加卷几层 stride
+##算法层
+定制化算法，底层篡改 mxnet 等模型的实现细节，牺牲 generalization 来换取对于特定问题、特定场景的性能优势
+##硬件层
+定制化硬件
+
+#相关重要会议
+##计算机视觉
+CVPR(Computer Vision & Pattern Recognition)
+##AI
+AAAI
+##机器学习
+
+##深度学习
+
+
+
+
+
+
+
+
+
+
+
+
+
+
