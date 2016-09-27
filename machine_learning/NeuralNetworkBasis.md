@@ -10,7 +10,6 @@ Essentially, 没有非线性激活函数的神经网络不是神经网络！其�
 
 激活函数极其重要，其为模型加入了非线性因素，加强了整个模型的表达力。这和人类神经元机制类似，人类神经元存在着稀疏反馈的重要特性，一个特定事件只能激活、点燃 (activate、fire) 巨大神经网络中的一小部分结构。激活函数可以抑制、过滤掉多余的反馈路径，实现稀疏反馈。
 
-
 #神经网络梯度公式
 对于每一个网络内神经元，神经元梯度 Gradient: $\eta = error\ f^{\prime}(net)$, $error$表示这个神经元所有输出上的合计偏差，$net$ 表示这个神经元的总输入。
 
@@ -27,7 +26,7 @@ $x^{10}=2$
 #Gradient Decsent:  
 
 ###Opertimizers  
-BGD - Batch
+BGD - Batch Gradient Descent
 SGD — Stochastic Gradient Descent
 
 
