@@ -14,9 +14,11 @@ Hadoop 框架的基础支持模块
 Multi NameNode Servers + Multi Namespaces + Block Pools(DataNodes)
 
 ##3，YARN
-负责 Cluster Resource Management，作为HDFS上的一个通用框架，用于协调管理整个集群资源。这个层次是通用的，不局限于 MapReduce 数据处理，还可以服务于其他大数据处理框架，例如某些Machine Learning大数据框架，比如 Spark。  
+负责 Cluster Resource Management，作为HDFS上的一个通用框架，用于协调管理整个集群资源。这个层次是通用的，不局限于 MapReduce 数据处理，还可以服务于其他大数据处理框架，比如 Spark（Spark可以脱离YARN直接架在HDFS，也可以架在Hadoop之外的平台上），Machine Learning 常使用到 Spark。  
 
-由一个中心节点 Resource Manager 以及一系列的处理节点 Node Manager 构成。中心节点可以接受客户的数据处理请求和子节点的资源申请请求，来统一协调完成任务。这一设计，分离了资源管理与数据应用 Application。每一个数据处理请求会生成一个 Application Master 运行在一个普通处理节点上，有需要的话，这个 Master 再向 Resource Manager 请求分配其他节点 Container；多个任务可以并发执行。
+由一个中心节点 Resource Manager 以及一系列的处理节点 Node Manager 构成。中心节点可以接受客户的数据处理请求和子节点的资源申请请求，来统一协调完成任务。这一设计，分离了资源管理与数据应用 Application。每一个数据处理请求会生成一个 Application Master 运行在一个普通处理节点上，有需要的话，这个 Master 再向 Resource Manager 请求分配其他节点 Container；多个任务可以并发执行。  
+
+具体的资源管理是可以配置的，例如 Default 是 FIFO（First In First Out），或者指定不同用户、不用应用的资源限制，或者Fairshare etc.
 
 ##4，MapReduce
 基于 YARN 的大数据处理工具。核心思想在于：把处理逻辑配置到数据上。这一点对分布式存储非常重要，传统数据处理算法考虑的是一个整体的数据源，而大数据是存储在N个机器上，处理流程并发地Map到数据存储的机器进行处理是高效的方式（Move Computation to Data）  
@@ -25,7 +27,8 @@ Multi NameNode Servers + Multi Namespaces + Block Pools(DataNodes)
 
 
 
-
+#Spark
+其重要抽象是 Resilient Distributed Dataset (RDD)，数据资源将使用抽象的 RDD 对象来标识，然后我们可以对这个对象进行一系列操作。这个面向 RDD 的编程非常好的封装了底层的分布式运算细节！并且，其提供的 cache 是 Spark 性能优越的关键，对于一些需要重复使用数据集的算法（例如 Machine Learning 迭代训练），Spark 可以方便地把数据 cache 在内存里面来加速训练过程。
 
 
 

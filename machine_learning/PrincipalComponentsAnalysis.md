@@ -85,15 +85,17 @@ $\hat{X} = \mu + Z*U^t$
 ##其他常用数据处理
 ###线性判别式分析 LDA（Linear Discriminant Analysis）or FLD（Fisher Linear Discriminant）
 
-
-
 ###独立成分分析 ICA（Independent Component Analysis）
 假设信号由多个独立信号源产生，这一方法可以将混合信号解离。一个经典的例子是鸡尾酒宴会 cocktail 问题；我们有 m 个放在不同位置的麦克风记录到 n 个信号，实际的信号源（说话的人）数量少于 m。在知道独立源数量的情况下，我们可以通过 ICA 还原出每个人说的话。由于麦克风数量可以远大于独立源数量，这个方法通常还会使用 PCA 先对数据进行预处理，压缩维度到独立源数量，拿到主要信息后再进行信号解离。
+
 ###非负矩阵分解 NMF（Non-negative Matrix Factorization）
 这一方法也是发现一组新的基来重新代表数据；但是这一方法着眼于 局部特征 local patterns 的发现，用组合局部模式的方法来重新代表数据集。经典的例子为将人脸分解为不同眼睛、鼻子、脸型等的组合，而非 PCA 的全局特征的叠加。这一方法常用于特征学习（重新组织特征），推荐系统（识别、细分用户群，商品类别），文档分类（TFIDF，Term Frequency Inverse Document Frequency 数据的稀疏矩阵分解）
 
+###Autoencoder
+深度学习常用技术，无监督学习，特征预处理
 
-
+###RBM
+深度学习常用技术，无监督学习，特征预处理；常用于深度信任网络（Deep Believe Network）的预训练环节
 
 
 

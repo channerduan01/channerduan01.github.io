@@ -21,7 +21,20 @@ $x_i = max\{x_{j}+1, 1\},\ \  1 <= j < i\ \ \&\ \ array_j <= array_i$
 ##Longest Common String
   
 ##Maximum Sum of Subarray
-这一问题非常经典！
+这一问题非常经典！如果使用暴力搜索来解的话，时间复杂度是 $ $
 
-
+``` C++
+    int maxSubsequence(vector<int>& nums) {
+        int i, size = (int) nums.size();
+        int x[size], l[size];
+        x[0] = l[0] = nums.at(0);
+        for (i = 1;i < size;i++) {
+            x[i] = l[i] = nums.at(i);
+            if (l[i-1] + nums.at(i) > nums.at(i))
+                x[i] = l[i] = l[i-1] + nums.at(i);
+            if (x[i-1] > x[i]) x[i] = x[i-1];
+        }
+        return x[size-1];
+    }
+```
 

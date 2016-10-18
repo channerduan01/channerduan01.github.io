@@ -1,5 +1,5 @@
 #Introduction
-神经网络乃是目前人工智能与机器学习最为热门的模型，从基础的 Perceptron，Back Propagation 发展到深度学习 Deep Learning including DBN (Deep Believe Network)，CNN (Convolutional Neural Network)，RNN (Recurrent Neural Network) and etc。这一以神经元信号传播方式为基础的模型具有强大的描述能力，广泛地应用于 Regression 和 Classification 问题，是现代机器学习的主流技术.本文将简要介绍其基础理论.
+神经网络乃是目前人工智能与机器学习最为热门的模型，从基础的 Perceptron，Back Propagation 发展到深度学习 Deep Learning including DBN (Deep Believe Network)，CNN (Convolutional Neural Network)，RNN (Recurrent Neural Network) and etc。这一以神经元信号传播方式为基础的模型具有 强大的描述能力，广泛地应用于 Regression 和 Classification 问题，是现代机器学习的主流技术.本文将简要介绍其基础理论.
 
 #Single-layer Perceptron and Multi-layer Perceptron (MLP)
 感知器 Perceptron 是最简单的神经网络形式，相当于一个单一的神经元节点，其将所有输入加权相加并加入自己的偏差bias后，通过激活函数产生输出。单层感知器就是一个 Perceptron 而已，相当于神经网络只包含输出层，而 MLP 至少包含一个 hidden 层。  
@@ -12,8 +12,6 @@ Essentially, 没有非线性激活函数的神经网络不是神经网络！其�
 
 #神经网络梯度公式
 对于每一个网络内神经元，神经元梯度 Gradient: $\eta = error\ f^{\prime}(net)$, $error$表示这个神经元所有输出上的合计偏差，$net$ 表示这个神经元的总输入。
-
-
 
 
 ###Relu (Rectified Linear Unit)
@@ -46,9 +44,15 @@ gradient diffusion
 #CNN
 ###Convolution Layer, Pool Layer, Fully Connected Layer
 
+#Deep Belief Network
+###Restricted Boltzmann Machine
+
+#Autoencoder
+
+#Sparse Coding
+
 #Latest Methods:  
 ##Dropout
-
 
 
 #神经网络加速的4个层次
