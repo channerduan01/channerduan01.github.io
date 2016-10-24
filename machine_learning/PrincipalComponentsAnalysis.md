@@ -98,7 +98,7 @@ $\hat{X} = \mu + Z*U^t$
 上面说到的编码结果 code ，相当于一个新的抽象层次来重新表征之前一个层次的输出，这是我们需要结果。而 decoder 在训练完之后就没有用了，只有 encoder 应用在最终模型中。我们以 code 作为这个层次的输出，继续训练下一次层级，这种逐层抽象化特征的方法和 RBM 一致；而这俩者的深度网络结构训练完成之后，不一定像 CNN 那样继续连接到 全连接网络（Fully Connected Neural Network）中，而可以作为特征接入到一般的分类器，如 Logistic Regression 或 SVM
 
 ###RBM
-深度学习常用技术，无监督学习，特征预处理，这个是基于能量的角度进行了，和上述 Antoencoder 不同；常用于深度信任网络（Deep Believe Network）的预训练环节
+深度学习常用技术，无监督学习，特征预处理，这个是基于能量的角度进行了，目前我的理解，这也是 auto-encoder 的一种方式，常用于深度信任网络（Deep Believe Network）的预训练环节
 
 
 

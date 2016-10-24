@@ -1,4 +1,4 @@
-#Hadoop的重要特性是 Scalability，Reliability；其主体结构为以下4个层次
+  #Hadoop的重要特性是 Scalability，Reliability；其主体结构为以下4个层次
 
 ##1，Hadoop Common
 Hadoop 框架的基础支持模块
@@ -26,12 +26,17 @@ Multi NameNode Servers + Multi Namespaces + Block Pools(DataNodes)
 这一层的逻辑和 HDFS 是完全分离的；不过类似的，其处理从中心节点（Master Node） JobTracker 发起，Map 到各个数据节点 (Slave Node) 执行 TaskTracker；其实就是把逻辑推出其要处理的数据上。
 
 
-
 #Spark
 其重要抽象是 Resilient Distributed Dataset (RDD)，数据资源将使用抽象的 RDD 对象来标识，然后我们可以对这个对象进行一系列操作。这个面向 RDD 的编程非常好的封装了底层的分布式运算细节！并且，其提供的 cache 是 Spark 性能优越的关键，对于一些需要重复使用数据集的算法（例如 Machine Learning 迭代训练），Spark 可以方便地把数据 cache 在内存里面来加速训练过程。
 
+##RDD
+RDD 上的操作分为 Transformation 和 Action
 
+###Transformations
+这类方法会创造一个新的 RDD 对象，例如 map；并且他们都是 lazy 的，不会立即执行，只会在有 Actions 要求返回结果时才执行；可以用 persist 或者 cache 将 RDD 持久化在内存，也可以持久化在硬盘（当然，cache 还是要等到 Actions 执行了才生效）不 cache 住的话，可能在每次执行 Actions 时都重复计算
 
+###Actions
+把数据做处理，返回给用户（driver program）最终结果
 
 
 

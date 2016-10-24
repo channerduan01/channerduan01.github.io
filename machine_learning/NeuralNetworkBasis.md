@@ -45,11 +45,12 @@ gradient diffusion
 ###Convolution Layer, Pool Layer, Fully Connected Layer
 
 #Deep Belief Network
+
+###Autoencoder
+
 ###Restricted Boltzmann Machine
 
-#Autoencoder
-
-#Sparse Coding
+###Sparse Coding
 
 #Latest Methods:  
 ##Dropout
