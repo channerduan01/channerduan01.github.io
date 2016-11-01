@@ -39,8 +39,8 @@ Complete, Congruent, Compact, Invariant
 Translation, Rotation, Scale  
 ###Moments
 ###SIFT
-###HOG
-###LBP
+###HOG（Histogram of Oriented Gradient）
+###LBP（Local Binary Pattern）
 
 #Detection
 
