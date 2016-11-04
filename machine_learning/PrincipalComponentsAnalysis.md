@@ -84,6 +84,7 @@ $\hat{X} = \mu + Z*U^t$
 
 ##其他常用特征处理
 ###线性判别式分析 LDA（Linear Discriminant Analysis）or FLD（Fisher Linear Discriminant）
+Fisher Ratio：$E = \displaystyle\frac{(\omega^tm_1-\omega^tm_2)^2}{\omega^tC_1\omega+\omega^tC_2\omega}$，$\omega$为投影方向
 
 ###独立成分分析 ICA（Independent Component Analysis）
 假设信号由多个独立信号源产生，这一方法可以将混合信号解离。一个经典的例子是鸡尾酒宴会 cocktail 问题；我们有 m 个放在不同位置的麦克风记录到 n 个信号，实际的信号源（说话的人）数量少于 m。在知道独立源数量的情况下，我们可以通过 ICA 还原出每个人说的话。由于麦克风数量可以远大于独立源数量，这个方法通常还会使用 PCA 先对数据进行预处理，压缩维度到独立源数量，拿到主要信息后再进行信号解离。

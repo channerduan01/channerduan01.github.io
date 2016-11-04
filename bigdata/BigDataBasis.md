@@ -25,6 +25,9 @@ Multi NameNode Servers + Multi Namespaces + Block Pools(DataNodes)
 
 这一层的逻辑和 HDFS 是完全分离的；不过类似的，其处理从中心节点（Master Node） JobTracker 发起，Map 到各个数据节点 (Slave Node) 执行 TaskTracker；其实就是把逻辑推出其要处理的数据上。
 
+##5，Hadoop Streaming
+帮助开发者使用其他语言来发起 MapReduce 任务；实际就是把其他语言转换成 Java
+
 
 #Spark
 其重要抽象是 Resilient Distributed Dataset (RDD)，数据资源将使用抽象的 RDD 对象来标识，然后我们可以对这个对象进行一系列操作。这个面向 RDD 的编程非常好的封装了底层的分布式运算细节！并且，其提供的 cache 是 Spark 性能优越的关键，对于一些需要重复使用数据集的算法（例如 Machine Learning 迭代训练），Spark 可以方便地把数据 cache 在内存里面来加速训练过程。
