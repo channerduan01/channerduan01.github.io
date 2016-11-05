@@ -1,15 +1,38 @@
-#stl
-
+#STL（Standard Template Library）
 ##vector
 - 一块连续的存储，随机查、改效率很高；删、增效率低（需要受影响的所有元素移动）
 - 每次存储超过限制，将会重新申请两倍大的存储空间，并转移已有数据；事先可以通过 reserve 预申请足量空间，免得多次倒腾（例如你用for循环一直插入数据）
+
+##string
+字符串
+
 ##list
-链表存储，高效的删、增开头、结尾的数据；但是随机访问效率低下
-##dequeue
+双向链表存储，高效的删、增开头、结尾的数据；但是随机访问效率低下
+
+##deque
 介于vector和list之间的页式存储；即提供高效的
 
-##stack
+##set、multiset、map、multimap
+基于 红黑树（RBTree）实现的 map 结构
 
+##hash_set、hash_multiset、hash_map、hash_multimap
+非标准的STL容器，基于 hash 实现的~ 我的 X-code 里面并没有~
+
+##stack、queue
+非标准的STL容器，而是在 deque 的基础上封装的 adapter；提供标准的 栈、队列 结构
+
+##priority queue 优先队列
+非标准的STL容器；数据 push 入列enqueue后，优先级高的先 pop 出列dequeue；其实就是 binary heap 基于 vector 的一个实现
+
+##sort、stable_sort、partial_sort
+各类排序算法，参数为容器上开头、结尾的迭代器，还可以传入自定义的比较函数：  
+```
+bool less_(const myclass & m1, const myclass & m2) {
+        return m1.second < m2.second;
+}
+
+sort(vect.begin(), vect.end(), less_);
+```
 
 #堆的分配，new、delete 以及 malloc（memory allocate）、free
 - **malloc与free是C++/C语言的标准库函数，new/delete是C++的运算符；它们都可用于申请动态内存和释放内存**
