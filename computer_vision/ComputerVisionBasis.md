@@ -1,6 +1,9 @@
 #Introduction
 计算机视觉是目前人工智能应用最为广泛的领域，例如 OCR (Optical Character Recognition), Biometrics 以及正在探索中的 Automated Driving.
 
+#Contrast Enhance 对比增强
+我在 traffic sign 的 benchmark 原始数据集处理时，相关论文都采用了类似技术，对原始图片质量进行提升。基于 对抗色觉论（opponent color theory），其主要思路是将原始图片映射到 Lab（L 是 black vs. white 标识光照，a 是 red vs. green，b 是 blue vs. yellow ） 色彩空间中，对 L、a、b 三个维度进行 normalize，然后再映射会到 RGB 色彩空间中，使得原始图像的光照因素影响淡化，色彩对比度也加强。
+
 #Image Filterring
 ##Background Subtraction
 ###Optimal Threshold

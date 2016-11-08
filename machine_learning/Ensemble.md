@@ -17,9 +17,7 @@ U 表示分割前的集合；
 $u_1、u_2$ 表示分割后的集合；  
 $P(u_1)、P(u_1)$ 表示分割后子集占的比例，他们和为 1
 
-
 #GBDT（Gradient Boost Decision Tree）
-
 
 #Adaptive Boost
 典型的提升方法。我之前的人脸检测项目在 Cascade 结构中使用过

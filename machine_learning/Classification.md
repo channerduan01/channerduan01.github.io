@@ -3,15 +3,15 @@
 
 #Logistic Regression
 虽然号称 Regression，但其实是 Classification 的模型。这一模型非常经典，常用。  
-##判别公式：$f(x) = sig(\theta^Tx),\ \ sig(z) = \displaystyle\frac{1}{1+e^{-z}}$  
+##判别公式：$h(x) = sig(\theta^Tx),\ \ sig(z) = \displaystyle\frac{1}{1+e^{-z}}$  
 实际上就是在经典的线性回归公式上嵌套了sigmoid（亦称为logistic）函数，把输出平滑地映射到(0,1)的区间上，产出有概率意义的分类器。常规地说，$f(x) > 0.5$ 列为 positive，反之列为 negtive；当然，这个阈值可以根据具体业务具体情况了设置。LR也常用于 CTR（Click-Through-Rate）的估计，评估广告被点击的概率  
 
 LR这种线性模型很容易并行化，处理上亿条训练样本不是问题，但线性模型学习能力有限，需要大量特征工程预先分析出有效的特征、特征组合，从而去间接增强LR的非线性学习能力  
 
-##梯度下降目标：$E = -ylog(f(x))-(1-y)log(1-f(x))$  
+##梯度下降目标：$E = -ylog(f(x))-(1-y)log(1-h(x))$  
 这个目标函数特别有意思，核心在于它引入log来优化 cost 计算，这一设计使得完全错误分类时的 penalty 达到无穷大，  
 
-##学习公式：$\theta = \theta + \eta \sum{(y-f(x))x}$
+##学习公式：$\theta = \theta + \eta \sum{(y-h(x))x}$
 这个梯度下降的学习公式，其实和 Linear Regression 的一致，他们 cost 函数的导数  $\displaystyle\frac{\partial E}{\partial \theta}$ 是一致的，很有趣
 
 #Perceptron
@@ -38,7 +38,11 @@ $\alpha_n > 0$ 对应的数据构成了支持向量，他们参与确定了最�
 ##Kernel Trick
 当我们处理复杂问题时，我们希望把原始的数据非线性地投射到高维度空间，甚至是无穷维度的空间来寻找完美分割数据的超平面，我们使用投影函数 $\phi(x)$ 改写优化目标中 $x$ 的内积为：$\phi^T(x_i)\phi(x_j)$。但是，这种操作会引入大量的计算，例如投射到无穷维度根本无法完成。这里使用 Kernel 将问题等效为：$K(x_i,x_j)$，**我们不需要投影到高维空间再计算内积，而是直接计算当前特征空间中的内积，再通过 Kernel 函数求出其在高维空间中对应的内积**。对于不同问题，不同场景，可以尝试选用不同的 Kernel 函数。Kernel函数 也是当下研究的一大热点。
 
-
+##SVM 和 LR 的差异
+- loss函数不同；LR（Logistic Regression）采用 log损失，SVM 采用 hinge（合页）损失。
+- LR 考虑全局，寻找一个所有点都远离的超平面；而 SVM 只考虑让 support vectors（支持向量） 远离而最大化 margin；所以 LR 对异常值敏感，而 SVM 对异常值不敏感。
+- 在训练集较小时，SVM 较适用，而 LR 需要较多的样本；SVM 推广能力更强。
+- 对非线性问题的处理方式不同；LR 主要靠特征构造，必须组合交叉特征，特征离散化。SVM也可以这样，还可以通过 kernel。
 
 
 
