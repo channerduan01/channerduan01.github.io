@@ -28,7 +28,19 @@
 - Client 向 Server 发送 FIN=1 附带 Seq X
 - Server 回复 ACK 附带 X+1
 - Server 在确认数据通道可以关闭后，向 Client 发送 FIN=1 附带 Seq Y
-- Client 回复 Server ACK 附带 Y+1
+- Client 回复 Server ACK 附带 Y+1  
+##纠错机制
+TCP是基于不稳定的IP协议设计出来的稳定传输层协议，其通过纠错机制以及重排序
+XXXXXXXXXXX
+
+#HTTP
+http 是应用层协议，基于TCP实现；基本的返回值有：  
+- 200，成功
+- 404，页面找不到
+- 500
+- ？，重定向
+
+
 
 #多线程对共享资源的访问
 - 互斥锁（mutex lock）；其只能为 0 或 1，用于控制保护某些资源只能被一个线程访问  

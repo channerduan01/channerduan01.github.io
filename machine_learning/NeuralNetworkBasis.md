@@ -56,6 +56,14 @@ SGD — Stochastic Gradient Descent，单个数据计算梯度
  
 ####Dropout
 
+#Latest Tech
+
+####AlexNet，取得历史性突破
+AlexNet 是一种典型的 convolutional neural network，它由5层 convolutional layer，2层 fully connected layer，和输出层 label layer (1000个node, 每个node代表ImageNet中的一个类别) 组成；2012年 Alex Krizhevsky 设计了这个8层的CNN刷新了ImageNet的image classification成绩，引起了computer vision community 的强烈关注。这篇文章的出现也是 deep learning 开始被 computer vision community 接受的关键转折点。
+####VGG-Net
+VGG-Net同样也是一种CNN，它来自 Andrew Zisserman 教授的组 (Oxford)，VGG-Net 在2014年的 ILSVRC localization and classification 两个问题上分别取得了第一名和第二名，VGG-Net不同于AlexNet的地方是：VGG-Net使用更多的层，通常有16－19层，而AlexNet只有8层。另外一个不同的地方是：VGG-Net的所有 convolutional layer 使用同样大小的 convolutional filter，大小为 3 x 3。
+####GoogleNet
+
 #神经网络加速的4个层次
 这都是从各个层次寻找平衡，达到业务目标的过程
 ####数据层

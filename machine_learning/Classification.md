@@ -2,17 +2,49 @@
 这里介绍一些经典 Classification 模型
 
 #Logistic Regression
-虽然号称 Regression，但其实是 Classification 的模型。这一模型非常经典，常用。  
+虽然号称 Regression，其实常用于 Classification 。这一模型非常经典，属于 Maximum Entropy Model 在类数目为2时的特例  
 ##判别公式：$h(x) = sig(\theta^Tx),\ \ sig(z) = \displaystyle\frac{1}{1+e^{-z}}$  
 实际上就是在经典的线性回归公式上嵌套了sigmoid（亦称为logistic）函数，把输出平滑地映射到(0,1)的区间上，产出有概率意义的分类器。常规地说，$f(x) > 0.5$ 列为 positive，反之列为 negtive；当然，这个阈值可以根据具体业务具体情况了设置。LR也常用于 CTR（Click-Through-Rate）的估计，评估广告被点击的概率  
 
 LR这种线性模型很容易并行化，处理上亿条训练样本不是问题，但线性模型学习能力有限，需要大量特征工程预先分析出有效的特征、特征组合，从而去间接增强LR的非线性学习能力  
 
-##梯度下降目标：$E = -ylog(f(x))-(1-y)log(1-h(x))$  
-这个目标函数特别有意思，核心在于它引入log来优化 cost 计算，这一设计使得完全错误分类时的 penalty 达到无穷大，  
+##数学根源：广义线性模型 \*
+其实 Logistic Regression、Linear Regression 都属于 Generalized Linear Model（广义线性模型），他们的目标函数都是由概率意义推导而出的。  
+对于 Logistic Regression 来说，这是一个 Bernoulli distribution（伯努利分布，0-1分布）问题，表述为：$p(y;\phi) = \phi^{y}(1-\phi)^{y-1},\ y\in{0,1}$，其中$\phi$表示样本为positive的概率。  
+  
+而 The exponential family distribution（指数族分布）的标准形式通过 T、a、b 确认参数为 $\eta$ 的指数族分布：
+$p(y;\eta)=b(y)exp(\eta^TT(y)-a(\eta))$  
+- $\eta$ 是 natural parameter  
+- $T(y)$ 是充分统计量  
+- $e^{-a(\eta)}$ 用作归一化；  
+   
+而对于 Bernoulli 来说，指数化形式为：
+$p(y;\phi) = \phi^{y}(1-\phi)^{y-1}\\
+ = exp\{ylog(\phi)+(1-y)log(1-\phi)\}\\
+ = exp\{ylog(\displaystyle\frac{\phi}{1-\phi})+log(1-\phi)\}$  
+- T(y) = y  
+- $\eta = \displaystyle\frac{\phi}{1-\phi}$  
+- $a(\eta) = log(1+e^\phi)$  
+- b(y) = 1  
+  
+**最终：$\phi = \displaystyle\frac{1}{1+e^{-\eta}}$，直接导出了 sigmoid 公式！**
 
-##学习公式：$\theta = \theta + \eta \sum{(y-h(x))x}$
-这个梯度下降的学习公式，其实和 Linear Regression 的一致，他们 cost 函数的导数  $\displaystyle\frac{\partial E}{\partial \theta}$ 是一致的，很有趣
+##梯度下降目标：$E = \displaystyle\frac{1}{N} \sum_{i}^{N}\{-y_ilog(h(x_i))-(1-y_i)log(1-h(x_i))\}$  
+这个目标函数特别有意思，核心在于它引入log来优化 cost 计算，这一设计使得完全错误分类时的 penalty 达到无穷大；  
+其实，这一目标函数是通过极大似然推导而出的  
+
+##学习公式：$\theta = \theta + \alpha\displaystyle\frac{1}{N}\sum_{i}^{N}{(y_i-h(x_i))x_i}$
+这个梯度下降的学习公式，其实和 Linear Regression 的一致，他们cost函数的导数  $\displaystyle\frac{\partial E}{\partial \theta}$ 一致；
+
+#Softmax Regression
+Sigmoid 函数用于 binary classification 中；而这里的 Softmax 函数用于 multiple classification，相当于前者的拓展版；另外这一个函数也广泛应用于神经网络分类问题的输出层  
+
+从效果上说，原始的 vector 经过 Softmax 之后，将会被 normalize，所有元素不为负且和为1，具备概率意义。
+
+
+
+#Naive Bayes
+
 
 #Perceptron
 感知器的分类，仅仅找到一条能切分正负样本的线（或者高维空间中的超平面），与 SVM 找到最优切分（最大 margin）不同，这个方法的容易有 overfitting，不易于 generalization，但是计算非常简单。

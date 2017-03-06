@@ -1,10 +1,6 @@
 #EM
 
-
-
 #Variational Inference
-
-
 
 #Markov Chain Monte Carlo
 
