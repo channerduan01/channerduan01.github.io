@@ -11,6 +11,7 @@ Anomalies are **'few and different'**
 They are minority and have attribute-values that are very different. Thus they tend to be isolated easily
 ### Advantages
 - No distance function need
+- Has significant advantage in processing high dimensional data (since it donot care distance)
 - Graceful handle missing value
 - Could provide anomaly explainations
 - Parameter Free
@@ -19,6 +20,7 @@ They are minority and have attribute-values that are very different. Thus they t
 ### Disadvantages
 - Not really Parameter Free...  
 The number of tress and sub-sampling size are specified
+- only for continuous-valued attributes
 
 ## Structure - Isolation Tree (iTree)
 - Proper Binary Tree (sometimes Strictly Binary Tree)
@@ -45,6 +47,10 @@ Based on the equation above, the anomaly score is a value between (0,1), the big
 - Each isolation tree can be specialised as each sub-sample includes different set of anomalies or even no anomaly (feature-sampling may make further effect)
   
 It is really important to find a appropriate sub-sampling size.
+### Feature Selection
+For high dimension data sets that have a large number of irrelevant attributes or background noises, feature selection can be a really important part for outlier detection task.  
+**Kurtosis (峰度) and Grubb's test** are good choices. 
+
 
 ## Using Isolation Forest
 First, the whole forest is built on the sub-sampling from original data. Then, the path lengths for all the data are measured and the anomaly scores are calculated.
@@ -59,6 +65,22 @@ For each data point, we travel through all the iTree to calculate the average he
 **The time complexity of evaluating is: $O(nt\log{\psi})$**  
 
 For the external nodes that did not totally expanded in training stage, the c(.) function mentioned before is used to calculate the expected path length based on the number of samples stayed in this node.
+
+## Further Research
+对于 iForest 的异常度评估，我们可以传播到其他维度上去；例如，我们对用户维度完成了 s(user) 的评估后，将这一异常度在其他维度进行传播分析：
+假设在某一维度上的实体 x，能够对应到 m 个用户以及 n 个点击；在我们一场分析中，观测到了局部的 $m^{\'}$个用户，以及相关的 $n^{\'} 个点击$
+
+$$visibility(x)=\frac{n^{\'}}{n}$$
+
+$$score(x)=\frac{\sum^{m^{\'}}_i{score(user_i)overlap(user_i,x)}}{n^{\'}}$$
+
+$$normalized\ score^{\'}(x)=visibility(x)score(x)$$
+
+
+
+
+
+
 
 
 
