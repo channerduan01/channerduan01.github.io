@@ -16,7 +16,7 @@
 - $u^tCu$ 是原始数据 $X$ 在$u$投影后方差值
 - $u^tu=1$ 约束了投影向量的大小，使得我们在约束大小的情况下发现最优方向
 
-这里利用 拉格朗日乘子（Laplacian Multiplier） 来求解主成分：
+这里利用 拉格朗日乘子（Lagrangian Multiplier） 来求解主成分：
 $L(u,\lambda)=u^tCu-\lambda(u^tu-1)\\
 \displaystyle\frac{\partial L}{\partial u}=2Cu-2\lambda u=0\\
 Cu=\lambda u$  

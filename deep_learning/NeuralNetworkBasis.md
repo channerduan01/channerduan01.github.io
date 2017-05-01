@@ -33,7 +33,7 @@ SGD — Stochastic Gradient Descent，单个数据计算梯度
         theta = theta-velocity;
 ```
 ####Weight decay(Regularization item)
-这是用于抗 overfitting 的，其实就是 Ridge Regression 加入的l2-norm ；每次迭代
+这是用于抗 overfitting 的，其实就是 Ridge Regression 加入的 ；每次迭代
 ####Annealing learning rate
 
 #Neural Network & Deep Learning

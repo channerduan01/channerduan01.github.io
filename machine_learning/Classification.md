@@ -19,9 +19,11 @@ $p(y;\eta)=b(y)exp(\eta^TT(y)-a(\eta))$
 - $e^{-a(\eta)}$ 用作归一化；  
    
 而对于 Bernoulli 来说，指数化形式为：
-$p(y;\phi) = \phi^{y}(1-\phi)^{y-1}\\
- = exp\{ylog(\phi)+(1-y)log(1-\phi)\}\\
- = exp\{ylog(\displaystyle\frac{\phi}{1-\phi})+log(1-\phi)\}$  
+
+$$p(y;\phi) = \phi^{y}(1-\phi)^{y-1}$$
+$$ = exp\\{ ylog(\phi)+(1-y)log(1-\phi)\\} $$
+$$ = exp\\{ylog(\displaystyle\frac{\phi}{1-\phi})+log(1-\phi)\\} $$
+
 - T(y) = y  
 - $\eta = \displaystyle\frac{\phi}{1-\phi}$  
 - $a(\eta) = log(1+e^\phi)$  

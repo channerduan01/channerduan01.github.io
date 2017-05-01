@@ -112,9 +112,9 @@ Hadoop 机器学习
 
 - Worker Node: 和 MapReduce 的 Mapper、Reducer 节点区分不同，Spark 框架下的所有计算资源统称为 Worker Node，节点上运行的 Spark Executor Java Virtual Machine 是其核心，完成计算工作。这里也有 Move Computation to Data 的过程，Spark 会尽可能地分配任务到数据已经ready到本地的节点上。另外，使用 Java 或者 Scala 的话，代码可以直接跑在这个 Virtual Machine 上，PySpark 的话，会有 python 的进程起来，再 connect 到 Virtual Machine 上面。
 
-- Cluster Manager: 对于节点管理（控制节点资源，管理节点状态等等），Spark supports YARN 和 Standalone
+- Cluster Manager: 对于节点管理（控制节点资源，管理节点状态等等），Spark supports YARN 和 Standalone (表示Spark自己进行节点管理)
 
-- Driver Program: 
+- Driver Program: 就是跑在跳板机上的Client。拥有 Spark Context 维持上下文，和集群的Spark Instance保持连接。可以通过 spark-submit 提交一系列的jobs；也可以通过 spark-shell 来进行交互式的数据操作
 
 
 ##关键细节
@@ -123,13 +123,38 @@ Hadoop 机器学习
 - Transformations 操作会保存在一个operator graph中，真正执行 Actions 的时候，会对这个 **DAG（Directed Acyclic Graph，非常重要~）**  进行根据各种依赖关系，进行整理、优化，产出最终直接序列（一些列包含map和reduce的阶段），通过 task scheduler 来最终执行；这整个过程中，中间过程的数据不写回磁盘的话，将会带来效率收益
 
 ##RDD
-RDD 上的操作分为 Transformations 和 Actions
+- Resilient Distributed Dataset，这是 Spark的数据存储方式，我们会把数据都对应到 RDD 对象，实际它上指向了集群上真正的数据集或者本地数据（HDFS、S3、HBase、Json等等）
+- RDD 是不可修改的，只能通过 Transform 处理为其他的 RDD（创建了一个新的）
+- 核心在于 Resilient，弹性地应对分布式计算中的 Failure
+
+RDD 上的操作分为 Transformations 和 Actions，下述进行详细介绍：
+
+### 自定义函数
+分布式处理环境中，自定义函数操作的 associative 以及 commutative 是关键，这直接影响系统是否能够高效地优化分布式处理流程；例如 groupByKey 和 reduceByKey 适用完全不同的场景，要从需求上去考量是否有必要适用高成本方案。
 
 ###Transformations
 这类方法会创造一个新的 RDD 对象，例如 map；并且他们都是 lazy 的，不会立即执行，只会在有 Actions 要求返回结果时才执行；可以用 persist 或者 cache 将 RDD 持久化在内存，也可以持久化在硬盘（当然，cache 还是要等到 Actions 执行了才生效）不 cache 住的话，可能在每次执行 Actions 时都重复计算
 
+- flatmap & map: RDD 中的每个elem一般为一行源数据，map对应的是一对一执行function的过程，只会把一行数据映射到一个结果；所以我们有时候需要使用flatmap，先把原始的一行解开为多个数据，例如 WordCount 的 case，我们希望把一行句子映射会一系列单词，这个时候就需要用flatmap完成map映射（可能是1对多），并把所有结果都flatten到一块，当做新的element看待
+
+- groupByKey：开销很大，需要把所有相关数据都shuffle到一起（key统一），再把所有value打包存在这个key下面。可以接受各种自定义处理函数
+- reduceByKey：比groupByKey轻很多，可以各个机器上先reduce缩减计算规模，然后再shuffle合并计算结果并reduce，因为每个key只产出一个值且不需要数据放在一块计算。要求自定义函数 associative 且 commutative
+
 ###Actions
 把数据做处理，返回给用户（driver program）最终结果
+- reduce：这个是action，所以与reduceByKey不同
+
+
+# Spark SQL
+比较类似 pandas 的 dataframe；DataFrame（老版本叫作SchemaRDD） 和 普通的 RDD 的最大区别是，DataFrame 保持了schema信息，描述structured data。会有 selecting, filtering, aggregating 等等常见的结构化数据操作
+
+### registerTmpTable("xxx")
+Spark 提供这样一个函数，可以把 Dataframe 注册为一个虚拟的表（表名即“xxx”），然后支持sql查询~
+eg. df.registerTempTable("people")
+    sqlContext.sql("select age, count(*) from people group by age").show()
+
+
+
 
 
 
