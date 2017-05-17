@@ -1,5 +1,5 @@
-正则化总结
-(需要引用我之前的文章：#机器学习的本质)
+Review of Regularization
+本文深入介绍相关正则化的一些认识
 
 生成模型、判别模型
 
@@ -15,8 +15,6 @@ ICLR 2017 Best Paper Award
 Generalization vs. Memory
 
 data-dependent regularization
-
-
 
 行列式不为零的方阵，才有对应的逆矩阵
 

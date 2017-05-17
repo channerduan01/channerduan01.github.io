@@ -144,14 +144,22 @@ RDD 上的操作分为 Transformations 和 Actions，下述进行详细介绍：
 把数据做处理，返回给用户（driver program）最终结果
 - reduce：这个是action，所以与reduceByKey不同
 
-
-# Spark SQL
+## Spark SQL
 比较类似 pandas 的 dataframe；DataFrame（老版本叫作SchemaRDD） 和 普通的 RDD 的最大区别是，DataFrame 保持了schema信息，描述structured data。会有 selecting, filtering, aggregating 等等常见的结构化数据操作
 
 ### registerTmpTable("xxx")
 Spark 提供这样一个函数，可以把 Dataframe 注册为一个虚拟的表（表名即“xxx”），然后支持sql查询~
 eg. df.registerTempTable("people")
     sqlContext.sql("select age, count(*) from people group by age").show()
+
+## 实践经验
+### 任务进度反馈
+一般命令行spark-shell中会以如下形式展示进度：
+Stage 46:=================>   (50+10 / 79)
+其中 79 为当前 Stage 的总任务数，50 表示已经完成的任务数，10表示正在运行的任务数；然后 79-50-10=19 的余下任务，可能是由于任务依赖而没有执行，或者是执行资源如executor num=10的限制而没有并发执行
+
+### 线上环境spark、scala版本与 线下开发环境spark、scala版本
+线上环境往往比较久，线下开发环境中使用线上版本的话，可能很多好用的工具都无法使用；但是两边环境不一致，又容易出现一些编译、兼容的bug。我最后还是采用了不一致的环境~会有很多坑，要注意随时在线上环境编译代码跑测试。
 
 
 
