@@ -1,0 +1,172 @@
+Database
+
+# Hive 和 MySql 的区别
+## Hive 属于 DW（Data Warehouse 数据仓库），目的是提供数据挖掘（查询），而非增删改
+- 基于 Hadoop 运行，提供类似 SQL 的 HQL，将用户的 QL 转化为 MapReduce 程序运行；Hive 其实就是 SQL 到 MapReduce 的映射
+- 倾向于做 ETL（Extract-Transform-Load）相关的工作
+- Hive 其实使用了 MySql 做 MetaStore，存储其表信息
+- hive -e "select ..." 直接执行 SQL 语句；hive -f filename 执行文件中 SQL 语句
+
+## MySql 提供复杂，灵活，高效的业务数据操作，各种增删改查；Hive提供了强大的Streaming，各种查各种数据处理
+
+## Group by：Mysql先执行select再执行group by，而Hive先group by 再select。所以我在Hive中没法在group by中使用select里面设置的别名，而Mysql可以
+
+# Hive 经验
+- MySql 可以直接用 select 测试内置函数；而 Hive 需要使用伪表概念 from dual 来测试函数，eg. select 1 + 9 from dual;
+- describe formatted tablename; 可以查看表详细相关信息，包括表的
+- 批量删除表的方法：hive -e "show tables like 'antispam_minerva_graph*'" | while read line; do hive -e "drop table $line"; done
+
+# DML、DDL、DCL区别
+## DML（Data Manipulation Language）  
+它们是 数据查询（SELECT）、数据操纵（UPDATE、INSERT、DELETE），用来对数据库里的数据进行操作的语言
+## DDL（Data Definition Language）  
+主要命令是 数据定义（CREATE、ALTER、DROP），用来定义或改变表（TABLE）的结构，数据类型，表之间的链接、表的索引
+约束（主键、唯一、外键、Null、核查、缺省 约束）等；大多在建立、修改表时使用   
+## DCL（Data Control Language）  
+提供数据控制（GRANT，REVOKE，DENY），用来设置或更改数据库用户或角色权限，只有 sysadmin、dbcreator、db_owner、db_securityadmin 等人员才有权力执行 DCL  
+
+# Hive 的 外部表 和 内部表
+## 外部表（external）
+	- 系统只负责管理表的元数据，实际的数据单独存放（路径在建表时由 'location' 指定）
+	- 数据导入非常方便，常用直接将.csv文件拷贝到hdfs上定义过的 'location'，然后添加相关表分区即完成数据导入
+	- 删除表 和 删除分区（Partition）不会修改实际数据，仅仅变动meta-data
+
+## 内部表（internal，默认）
+	- 系统将负责表结构元数据以及表内容实际数据的管理
+	- 数据导入需要系统拷贝数据到其内部
+	- 删除表 和 删除分区 会损失实际数据
+
+# ETL（Extract-Transform-Load）
+是数据抽取（Extract）、清洗（Cleaning）、转换（Transform）、装载（Load）的过程
+
+# 表的分区
+
+# MySql 存储引擎，MyISAM与InnoDB区别
+## MyISAM 类型
+
+## InnoDB 类型
+
+# 常用操作
+建立连接				mysql -h localhost -P 3306 -u root -p123（localhost 可换成远程 ip；-p 后面不要加空格）
+查看所有数据库			show databases;
+查看当前的数据库		select database();
+切换数据库				use database_name；
+查看所有表				show tables;
+查看匹配的表			show tables like "ad%";(mysql可以，在 hive 实测时通配符改成*才行~)
+查看表结构				describe (table name);
+查看表分区情况			show partitions (table name);
+
+## 基本条件符号
+比	  较			=, <, >, <=, >=, <>, !=, !>, !<, 以及 NOT + 前面任一比较符
+确定范围			BETWEEN … AND … , NOT BETWEEN … AND …
+确定集合			IN, NOT IN
+字符匹配			LIKE, NOT LIKE（通配符 '%' 代表任意长度 [0,无穷) 字符串；'_' 代表任意单个字符；ESCAPE '\' 换码符）
+空　　值			IS NULL, IS NOT NULL（不能使用 = NULL 代替）
+多重条件			AND, OR（AND 优先级高于 OR）
+
+## 典型查询
+SELECT子句			指定要显示的属性
+FROM子句：			指定查询对象(基本表或视图)
+WHERE子句：			指定查询条件
+GROUP BY子句：		询结果排序（ASC 对查询结果按指定列分组，列值相同的记录为一组，通常再在该组上施加集函数运算
+HAVING短语：		筛选出只有满足指定条件的组
+ORDER BY子句：		询结果排序（ASC 默认此升序、DESC；空值视为最大值）
+
+## 集函数（Aggregate Functions）
+- 计数
+COUNT（[DISTINCT | ALL] *）
+COUNT（[DISTINCT | ALL] <列名>）
+- 计算总和  
+SUM（[DISTINCT | ALL] <列名>）	
+- 计算平均值  
+AVG（[DISTINCT | ALL] <列名>）
+- 求最大值  
+MAX（[DISTINCT | ALL] <列名>）	
+- 求最小值  
+MIN（[DISTINCT | ALL] <列名>）
+
+## 连接查询
+INNER JOIN 内连接（仅返回连接条件匹配的行）: 
+- 等值连接：使用 = 符号比较连接列，查询结果中包含比较的重复列
+- 自然连接：类似 等值连接，不过删除了重复列；使用关键字 NATURAL，不能指定条件，自动关联主键
+- 不等连接：使用 = 以外的比较符进行连接
+OUTER JOIN 外链接（返回表中其他数据）
+- LEFT 左外连接：返回左表全量及以及右表匹配数据
+- RIGHT 右外连接：返回右表全量及左表匹配数据
+- FULL 全外连接：返回左右俩表全量及匹配数据
+
+## 嵌套查询
+
+## 查询谓词
+ANY、ALL、EXISTS
+
+## 数据类型
+- VARCHAR 和 TEXT
+
+
+
+
+## 查询中常用的字段加工函数
+
+- 时间戳动态处理：FROM_UNIXTIME(unix_timestamp,format)
+	format 参数表示时间格式
+	%M 月名字(January……December)
+	%W 星期名字(Sunday……Saturday)
+	%D 有英语前缀的月份的日期(1st, 2nd, 3rd, 等等。）
+	%Y 年, 数字, 4 位
+	%y 年, 数字, 2 位
+	%a 缩写的星期名字(Sun……Sat)
+	%d 月份中的天数, 数字(00……31)
+	%e 月份中的天数, 数字(0……31)
+	%m 月, 数字(01……12)
+	%c 月, 数字(1……12)
+	%b 缩写的月份名字(Jan……Dec)
+	%j 一年中的天数(001……366)
+	%H 小时(00……23)
+	%k 小时(0……23)
+	%h 小时(01……12)
+	%I 小时(01……12)
+	%l 小时(1……12)
+	%i 分钟, 数字(00……59)
+	%r 时间,12 小时(hh:mm:ss [AP]M)
+	%T 时间,24 小时(hh:mm:ss)
+	%S 秒(00……59)
+	%s 秒(00……59)
+	%p AM或PM
+	%w 一个星期中的天数(0=Sunday ……6=Saturday ）
+	%U 星期(0……52), 这里星期天是星期的第一天
+	%u 星期(0……52), 这里星期一是星期的第一天
+
+	eg. from_unixtime('1480867328','%H:%i');
+
+- 截取子串：SUBSTRING(string,pos,length)
+	pos		支持用负数来反向定位
+	length 	参数可缺省
+
+	eg.Select SUBSTRING('abcde',2)    ->  'bcde'
+	   Select SUBSTRING('abcde',-2)   ->  'de'
+	   Select SUBSTRING('abcde',-4,3) ->  'bcd'
+
+- 按照关键字截取子串：SUBSTRING_INDEX(string,target,select_num)
+	target		标识搜索的关键字
+	select_num	标识子串选取几个关键字，支持负数来反向截取子串
+
+	eg.Select SUBSTRING_INDEX('1.2.3.4','.',1)	->	'1'
+	   Select SUBSTRING_INDEX('1.2.3.4','.',2)	->	'1.2'
+	   Select SUBSTRING_INDEX('1.2.3.4','.',-2)	->	'3.4'
+
+- 字符串合并
+	Select CONCAT('1','-','2')
+
+- 转数据类型，以及设定小数细节
+cast(avg(a) as decimal(10,2)) as aa
+
+
+
+## HIVE 相关
+
+explain 关键词；解析语法树，查看hql转换成的mapreduce语句
+
+
+
+

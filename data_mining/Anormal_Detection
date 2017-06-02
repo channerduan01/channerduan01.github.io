@@ -1,0 +1,30 @@
+Anormal Detection
+
+
+
+# Method Types
+## Rule-based
+- easy to reason
+- understandable
+- can also be dynamic and adaptive
+
+
+## Machine Learning-based
+
+
+# Some Interesting Thought
+
+## How To Detect Deviations from Known Patterns rather than Detect Fraud Anomalies
+(Acctually, it is bad for weird guys...)
+https://www.youtube.com/watch?v=Mj1oHwJ7i2o
+
+
+
+# My own thought
+## Features
+- cookie_num/ip_num
+
+
+
+
+

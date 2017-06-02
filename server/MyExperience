@@ -1,0 +1,165 @@
+后端知识
+
+#启动 Java；eg. nohup java -Xmx40000m -Xms40000m -jar >>stdout.log 2>&1 &
+- nohup：相比于 java -jar 直接运行jar包，这是一种在生产环境长时间运行jar包的方式；hangup（指终端退出时发送 hangup 信号来通知关闭所有子进程），这里的 nohup 则不会导致挂断
+- Xmx：				设置应用程序能够使用的最大内存，单位 M
+- Xms：				设置程序初始化的内存大小，单位 M
+- >>stdout.log：	标识了标准输出的位置，这里用了追加输出
+- 2>：				'2>' 标识错误输出，这里用的覆盖数据，前面的标准输出可以写成 '>>1'
+- &1：				这里把错误输出定向到了标准输出中
+（额外要点：	/dev/null 是系统的垃圾桶，输出定位到这里的话，有去无回；这个设备怎么读都是全 0）
+- 最后的 &			标识这次启动在后台运行，这里貌似和 nohup 效果是重复的，不是必要的
+
+# Linux 命令行尾巴加 & 符号
+这是把命令交给 linux 内核去运行一个进程任务
+
+
+# ssh (Secure Shell)
+服务器一般都是采取ssh登录后使用，另外，scp等文件传输也依赖ssh
+
+## 本地rsa非对称加密key生成过程
+一般情况直接使用 "ssh-keygen -t rsa"，之后一般直接使用默认保存路径；另外提示passphrase输入，这个用于本地加密private key（每次使用private key时会要求输入passphrase），一般直接ENTER跳过
+成功生成后，使用 "eval $(ssh-agent -s)" 检查本地ssh服务状态，并使用 "ssh-add ~/.ssh/id_rsa" 载入相关key到本地的ssh服务
+
+## 配置自动登录服务器
+需要把client的rsa pub key保存到服务器的authorized_keys配置文件中，可在client上使用命令如下：
+eg. "cat ~/.ssh/id_rsa.pub | ssh duanchao@10.203.33.20 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+有时候服务器的配置不生效，可以试试下面的设置：
+chmod 755 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+also check "/etc/ssh/sshd_config" for "PasswordAuthentication no"
+
+# Linux Crontab 定时任务
+##格式
+  *　　*　　*　　*　　*　　command
+  分　 时　 日　 月　 周　   命令 
+第1列 表示分钟1～59 每分钟用*或者 */1表示 
+第2列 表示小时1～23（0表示0点） 
+第3列 表示日期1～31 
+第4列 表示月份1～12 
+第5列 标识号星期0～6（0表示星期天） 
+第6列 要运行的命令 
+
+##相关指令
+- 查看：crontab -l
+- 编辑：crontab -e
+
+# Linux 常用指令
+## awk
+使用模式为：awk '{pattern + action}' {filenames}
+其利用 pattern（默认空格或tab为分隔符）把原数据的一行分割成多个域，$0 标识整行，$1等数据标识分割后第几个域
+可以使用 [-F  field-separator] 指定具体的分隔符（正则也可以啦）
+字符串分割实例
+cat t | awk '{print $1}'
+cat t | awk '{split($0,a,"\\\\x01" );print a[2]}' | awk '{split($0,a,"\\\\x02" );print length(a)}'
+cat t | awk '{split($0,a,"\\\\x01" );print a[2]}' | awk '{split($0,a,"\\\\x02" );for(i=1;i<=length(a);i++) print a[i]}'
+
+cat pc_search/clickInfo.log.2017-03-11-* | awk -F'\"sid\":|,\"lmid\"|\"channel_id\":|,\"place_id\"' '{print $2 $4}' >test
+
+head -n 1 pc_search/clickInfo.log.2017-03-11-23-58 | awk -F'\"sid\":|,\"lmid\"|\"click_id\":|,\"channel_id\":|,\"place_id\"|\"divWidth\":|,\"divHeight\":|,\"positionX\":|,\"positionY\":|,\"keyDown\"|\"showTime\":|,\"clickTime\":|,\"upTime\":|,\"refer\"' '{print $2,$3,$5,$7,$8,$9,$11,$12,$13,$14}'
+
+cat pc_search/clickInfo.log.2017-03-11-* | awk -F'\"sid\":|,\"lmid\"|\"click_id\":|,\"channel_id\":|,\"place_id\"|\"divWidth\":|,\"divHeight\":|,\"positionX\":|,\"positionY\":|,\"keyDown\"|\"showTime\":|,\"clickTime\":|,\"upTime\":|,\"refer\"' '{print $2,$3,$5,$7,$8,$9,$11,$12,$13,$14}' > test
+
+
+## sed (stream editor)
+流编辑器，用于各种 增删改查
+-n 'x,yp' filename：显示文本 x行 到 y行 的内容
+-i	：直接修改文件的 option
+s   ：替代命令，s/表答式/replacement/
+g   ：全部替代，s/表答式/replacement/g
+其他事例
+sed -i 1d a.file	删除首行
+
+还可以用来直接编辑变量：eg. `sed "s/-//g" <<< "${THEDAY}"`
+
+
+## grep
+-v 反转，返回不包含相关文本的行
+-i 忽略大小写
+
+## find [path] other_parameters...
+-name [regrex]：给出进行匹配的文件名
+-user/group：根据用户/组进行匹配
+-a/o/not（and/or/not）：用来链接多个查询条件，俩个条件以上必用
+		eg. find /tmp -name "*.sh" -a -user root
+–exec：附加命令执行
+
+## which
+搜索某个命令默认对应的具体执行文件路径
+	eg. which java
+whereis 则是列举出所有的相关文件
+
+## du
+文件夹大小查询；可以指定列出的子文件夹大小的层数，为0的话仅列举一个总目录
+	eg. du -h --max-depth=0 ~
+
+## 打包指令 tar；这里只是打包~
+- 解包：tar xvf FileName.tar
+- 打包：tar cvf FileName.tar DirName（注：tar是打包，不是压缩！）
+
+## 压缩指令 gzip；只是压缩
+解压：gzip -d FileName.gz
+压缩：gzip FileName
+
+## 打包压缩指令 tar；
+解压：tar zxvf FileName.tar.gz
+压缩：tar zcvf FileName.tar.gz DirName
+
+## 输出复制到剪切板指令 xsel：
+ls | xsel -bi
+
+## mkdir -p 可以一次性建立多级目录
+
+# Download file using ssh:
+
+## SFTP
+## rz, sz
+只能下载、上传单个文件
+
+## SCP（Secure Copy），是基于 ssh 安全登录的数据远程拷贝工具
+配置 ssh 的 .pub 公开秘钥(~/.ssh目录下)到双方 authorized_keys 的话，可以免输密码，自动化传递文件；不过要特别注意使用的用户名
+- scp root@192.168.20.20:/root/1.txt  /home			拷贝到本地的 /home 文件
+- scp /path/local_filename username@servername:/path 	上传
+- 使用 scp -r 的话可以拷贝整个目录
+
+## TLS（Transport Layer Security）安全传输层协议
+
+scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_max_click ./
+scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_outer ./
+
+scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_max_show ./
+
+scp adadmin@10.203.32.241:/da1/adadmin/workspace/MaxLogToHDFS/databk/2017-02-26/data_max_show ./
+
+scp adadmin@10.129.100.55:/home/adadmin/MediaGrading/data/feature_adspace_$date ./data
+
+scp adadmin@10.203.32.113:/da1/adadmin/workspace/dataPretreatment/databk/2017-03-11/test ./
+
+# Shell 脚本相关
+
+## set 命令
+	set -x，执行命令之前打印命令，方便我们调试相关脚本
+
+# 环境部署
+
+## java 配置
+- "java -version"：查看JDK版本
+- whereis java（linux 下）
+- which java（linux 下）
+
+## 环境变量
+常用的有：
+- /etc/profile
+- /etc/bashrc（这个对于远程登录用户 su 后也能生效，这边都是用这个）
+- ~/.bash_profile
+- ~/.bashrc
+修改完成之后使用 source ~/.bash_profile 指令让修改在当前环境立即生效
+
+
+# vim 使用小技巧
+## 显示行数；指令 set number
+## 取消行数：指令 set nonumber
+## 上下翻页：CTRL+ F/B (forward/backward)
+## 撤销操作：normal模式下，字母 u（undo）
+## 恢复操作：normal模式下，Ctrl+r（redo）
+## 粘贴模式：指令 set paste；非常好用，取消粘贴的自动缩进

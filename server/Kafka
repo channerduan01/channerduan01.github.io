@@ -1,0 +1,31 @@
+Kafka笔记
+http://www.cnblogs.com/likehua/p/3999538.html
+
+#什么是 Kafka
+- Kafka is a distributed,partitioned,replicated commit logservice。是类似 Java消息服务 JMS（Java Message Service）的消息中间件，用于在分布式系统中发送消息，进行异步通信  
+
+#Kafka 和 JMS
+ - Kafka 即使消息被消费，消息仍然不会被立即删除。日志文件将会根据broker中的配置要求，保留一定的时间之后删除;比如log文件保留2天,那么两天后，文件会被清除，无论其中的消息是否被消费。kafka通过这种简单的手段，来释放磁盘空间，以及减少消息消费之后对文件内容改动的磁盘IO开支  
+ - Kafka 并没有提供 JMS 中的“事务性”消息传输担保(消息确认机制)“消息分组”等企业级特性；Kafka 只能使用作为“常规”的消息系统，在一定程度上，尚未确保消息的发送与接收绝对可靠（比如,消息重发,消息发送丢失等）
+
+#存储结构
+- 其存储为磁盘存储，每一类消息称为一个 Topic，其可被分为多个 Partition；Partition 就是具体的日志文件，发布到 Partition 的具体消息会 append 到其尾部；每条消息在文件中的位置称为 offset 偏移量（long型数字），其唯一地标示一条消息；
+- Partitions 需要备份的个数（replicas）可配置，每个 Partition 将会被备份到多台机器上，以提高可用性；配置了备份的情况下，每个 Partition 都会有一个 leader 负责来承载全部请求压力，多个 follower 单调地和 leader 进行消息同步；Kafka 会均衡地分散集群中的 leader
+
+#系统结构
+ - Producer 和 Consumer 是中间件连接的双方，都可以是集群
+ 	Producer 将消息发布到指定的 Topic 中,同时 Producer 也能决定将此消息归属于哪个 Partition
+ 	Consumer 归属于 Consumer Group，Topic 中的一条消息，只会被相关 Consumer Group 中的一个 Consumer 消费；由多少相关 Group，消息就广播传递多少次
+ - Kafka 集群由对个Kafka实例组成，每个实例（server）被称为 broker
+ - Zookeeper 被用于协调管理 Producer、Consumer、Kafka 集群，并保存一些 meta 信息；这样的话 Kafka 集群几乎不需要维护任何 Consumer 和 Producer 的状态信息，这些信息由 Zookeeper 保存；因此 Producer 和 Consumer 的客户端实现非常轻量级，它们可以随意离开，而不会对集群造成额外的影响
+
+ #细节设计
+ - 文件存储消息高度依赖磁盘IO，所以消息写时候会设置 buffer 来一次性写入多条消息以减少磁盘调用次数
+ - 对于网络IO，Producer 和 Consumer 可以设置一次性读写一定量的消息来提升网络IO性能；网络IO上还有内存映射
+ - Producer 直接和 Partition Leader 保持 Socket 连接，直接发送消息，消息均衡由 Producer 通过 random、轮询 等策略实现
+ - Consumer 使用 消息 pull（fetch）的方式获取消，通过消息 offset 来 获取一定条数的消息；Consumer 也可以重置 offset 来重新消费消息；offset 保存在 Zookeeper 中，记录每个 Consumer 消费的 Partition 中的最大 offset
+
+#Guarantees
+- 发送到 Partition 中的消息将会按照它接收的顺序追加到日志中
+- 对于 Consumer 而言，他们消费消息的顺序和日志中消息顺序一致
+- 如果 Topic 的 “replicationfactor” 为 N,那么允许 N-1 个 Kafka 实例失效

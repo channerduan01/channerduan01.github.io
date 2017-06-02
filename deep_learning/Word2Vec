@@ -1,0 +1,21 @@
+Word2Vec
+
+# 定义
+Word2vec 是 Google 实现 Word Embedding 的一种具体的 approach。那么什么是所谓的 Embedding ？
+
+## Embedding
+Embedding 这个词来自于拓扑学，一个形象的例子：地图就是对于现实地理的embedding，现实的地理地形的信息其实远远超过三维 但是地图通过颜色和等高线等来最大化表现现实的地理信息。
+
+## Word Embedding
+Word Embedding 也就是用固定的维度来最大化表现词的信息。这是一个用于表征语义的连续的稠密的特征空间，相邻的点语义上具有相似性，并且空间中的每一个维度都有语义含义，一个经典的例子就是这个特征空间中的观察到的等式：King-Queen = Man-Woman
+
+
+
+
+
+
+
+
+
+
+

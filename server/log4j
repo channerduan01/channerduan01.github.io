@@ -1,0 +1,15 @@
+log4j
+
+#日志记录方式：log4j.appender.stdout
+
+选择 Rolling 的话，可以自动地设置日志按照时间分割（例如每小时、每分钟切一个日志）
+
+
+
+#日志形式：log4j.appender.stdout.layout
+
+此句为定义名为stdout的输出端的layout是哪种类型，可以是
+- org.apache.log4j.HTMLLayout（以HTML表格形式布局），
+- org.apache.log4j.PatternLayout（可以灵活地指定布局模式），
+- org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串），
+- org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）
