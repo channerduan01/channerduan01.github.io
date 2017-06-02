@@ -133,12 +133,18 @@ RDD 上的操作分为 Transformations 和 Actions，下述进行详细介绍：
 分布式处理环境中，自定义函数操作的 associative 以及 commutative 是关键，这直接影响系统是否能够高效地优化分布式处理流程；例如 groupByKey 和 reduceByKey 适用完全不同的场景，要从需求上去考量是否有必要适用高成本方案。
 
 ###Transformations
-这类方法会创造一个新的 RDD 对象，例如 map；并且他们都是 lazy 的，不会立即执行，只会在有 Actions 要求返回结果时才执行；可以用 persist 或者 cache 将 RDD 持久化在内存，也可以持久化在硬盘（当然，cache 还是要等到 Actions 执行了才生效）不 cache 住的话，可能在每次执行 Actions 时都重复计算
+这类方法会创造一个新的 RDD 对象，例如 map；并且他们都是 lazy 的，不会立即执行，只会在有 Actions 要求返回结果时才执行；可以用 persist 或者 cache 将 RDD 持久化在内存（使用 unpersist 释放），也可以持久化在硬盘（当然，cache 还是要等到 Actions 执行了才生效）不 cache 住的话，可能在每次执行 Actions 时都重复计算。
+另外， Transformation 可以分为：
+- narrow transformation，直接在单个partition内 local 完成转换，如 filter、flatMap、map
+- wide transformation，需要网络与其他节点交互完成转换，如 groupByKey、reduceByKey
+下面详解几个常见的transformation：
+- flatMap & map: RDD 中的每个elem一般为一行原始数据，map 是一对一地执行 function，只把一行数据映射到一个结果；相对的 flatMap 则是把原始的一行数据映射到多个结果，实践中 flatMap 执行的 function 输出是一个 Array。例如 WordCount 的 case，我们希望把一行句子映射会一系列单词，这个时候就可以用 flatMap 完成映射（1对n），并把所有结果都 flatten 到一块，当做新的 element 看待
 
-- flatmap & map: RDD 中的每个elem一般为一行源数据，map对应的是一对一执行function的过程，只会把一行数据映射到一个结果；所以我们有时候需要使用flatmap，先把原始的一行解开为多个数据，例如 WordCount 的 case，我们希望把一行句子映射会一系列单词，这个时候就需要用flatmap完成map映射（可能是1对多），并把所有结果都flatten到一块，当做新的element看待
+- groupByKey & reduceByKey：groupByKey 开销很大，需要把所有相关数据都 shuffle 到一起（key统一），再把所有value打包存在这个key下面；可以接受自定义处理函数，来处理(key, iterator) 类型的数据。reduceByKey 比 groupByKey 轻量很多，因为每个key只产出一个最终值且不需要数据放在一块计算，可以各个机器上先直接执行 reduce 相关函数，然后再 shuffle 合并计算结果；也就是说 reduceByKey 只 shuffle 计算结果 而 groupByKey 要 shuffle 原始数据。reduceByKey 要求自定义函数 associative（结合的） 且 commutative（交换的）
 
-- groupByKey：开销很大，需要把所有相关数据都shuffle到一起（key统一），再把所有value打包存在这个key下面。可以接受各种自定义处理函数
-- reduceByKey：比groupByKey轻很多，可以各个机器上先reduce缩减计算规模，然后再shuffle合并计算结果并reduce，因为每个key只产出一个值且不需要数据放在一块计算。要求自定义函数 associative 且 commutative
+有一组特殊的底层 transformations 必须强调一下：
+- coalesce，partition 合并的操作，属于轻量级合并，只能从多往少了合并，可以看做是 narrow transformations，不会引入开销很大的 shuffle 过程。
+- repartition，partition 的合并或分割操作，强制 shuffle，相当于把整个数据集在集群上重新整理一遍。
 
 ###Actions
 把数据做处理，返回给用户（driver program）最终结果
