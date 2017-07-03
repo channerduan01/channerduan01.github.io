@@ -20,5 +20,7 @@ $$P(y_j|X) = \displaystyle\frac{P(X|y_j)P(y_j)}{\sum_i^KP(X|y_i)P(y_i)}$$
 
 
 #“没有免费的午餐”（No Free Lunch）定理
+没有一个算法是适用所有情景的，不同数据集、不同问题有他们各自最合适的算法。即使是deep learning也会有很多不适用的场景。
+
 
 
