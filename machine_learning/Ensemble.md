@@ -3,6 +3,22 @@
 
 ## Decision Tree 决策树
 
+### Decision Tree 和 LR
+不同模型的本质差异，在于他们的 hypotheses 对于现实（也可说数据）的 assumeption：
+#### Decision trees assume
+decision boundaries are parallel to axes；我们是通过一系列的平行于数轴的 decision boundaries 对数据进行划分的，这是一个很强的假设。
+#### Logistic Regression assumes
+there is one smooth linear decision boundary；我们以 inverse logit function applied to a weighted sum of our features 定义 P(Y|X)，在特征空间拟合出一个线性的 decision boundary，这条线（或超平面）是任意的，不一定平行于任何数轴；当然这种线性可切分也是一个很强的假设。
+#### 对于两者这里有一个比较全的比对：
+
+- Both algorithms are really fast. There isn't much to distinguish them in terms of run-time.
+- Logistic regression will work better if there's a single decision boundary, not necessarily parallel to the axis.
+- Decision trees can be applied to situations where there's not just one underlying decision boundary, but many, and will work best if the class labels roughly lie in hyper-rectangular regions.
+- Logistic regression is intrinsically simple, it has low variance and so is less prone to over-fittring. Decision trees can be scaled up to be very complex, are more liable to over-fit. Pruning is applied to avoid this.
+- Finally, creating a decision tree that donot have to create rules that are parallel to the axis, which motivates **support vector machines**.
+
+
+
 ### 距离度量的概念
 - 样本之间的相似性度量，KNN
 - 最大间隔的线性分类器，SVM支持向量机
