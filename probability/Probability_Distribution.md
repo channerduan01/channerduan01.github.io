@@ -1,6 +1,12 @@
 # Bernoulli、Binomial、Beta 分布详解
 本文关注 离散随机变量 discrete random variable 相关的分布；相对的，连续随机变量 continuous random variable 如经典的 高斯分布（Gaussian Distribution）会在其他文章中介绍。
 
+**到底什么是 distribution “分布” ？**
+分布是一个抽象的概念，从概率统计的角度说，分布是一个数学函数 that providing the probabilities of occurrence of different possible outcomes in an experiment.
+通俗来说，分布可以看做是对 random variable 随机变量 的一种描述，分布可以给出所有 随机变量 的取值对应的概率（连续随机变量得到的是可能性PDF），这是正向过程。
+我们真正观察到的结果只是采样，我们预测的结果只是期望值，而对于随机变量的分布本身，我们只能通过大量的采样来猜测（也可以结合先验知识），这是反向过程。
+
+
 典型的离散随机变量的分布有：
 
 - 伯努利分布（Bernoulli Distribution）
@@ -97,7 +103,7 @@ $$p(\mu|m,l,a,b)=\frac{p(m,\mu|l,a,b)\ p(\mu|a,b)}{p(m|l,a,b)}=\frac{Bin(m|N,\mu
 这里涉及的概率转换的过程相当于以下任意一个公式：
 
 - $posterior=\displaystyle\frac{likelihood*prior}{evidence}$
-- $p(\mu|m)=\displaystyle\frac{p(m,\mu)\ p(\mu)}{p(m)}$
+- $p(\mu|m)=\displaystyle\frac{p(m|\mu)\ p(\mu)}{p(m)}$
 - $Beta=\displaystyle\frac{Bin\ *\ Beta}{constant}$
 
 Dirichelet 和 Beta 类似，是把俩种结果推广到K种结果，这里不展开详述了。

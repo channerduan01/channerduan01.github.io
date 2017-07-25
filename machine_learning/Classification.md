@@ -43,10 +43,7 @@ Sigmoid 函数用于 binary classification 中；而这里的 Softmax 函数用�
 
 从效果上说，原始的 vector 经过 Softmax 之后，将会被 normalize，所有元素不为负且和为1，具备概率意义。
 
-
-
 #Naive Bayes
-
 
 #Perceptron
 感知器的分类，仅仅找到一条能切分正负样本的线（或者高维空间中的超平面），与 SVM 找到最优切分（最大 margin）不同，这个方法的容易有 overfitting，不易于 generalization，但是计算非常简单。
@@ -65,7 +62,7 @@ $\omega^t x + b$ 可以视为数据 $x$ 在 $\omega$ 方向上的投影长度与
 
 显然，在我们的 constraint 限制下，数据到超平面的最小距离为：$\displaystyle\frac{1}{||\omega||}$  
 所以，我们的训练目标就变成了在 constraint 的条件下，最大化这个距离，也就是最小化 $||\omega||$
-  
+
 常用的优化目标由 Laplacian 推导推导：$L(\omega,b,\alpha) = \displaystyle\frac{1}{2}||\omega||^2-\sum_{n=1}^N{\alpha_n(y_n[\omega^t x + b] - 1)},\ \alpha_n > 0$  
 最终等效于一个二项式问题：$\min_{\alpha}\displaystyle\frac{1}{2}\sum_{i=1}^N\sum_{j=1}^Na_ia_jy_iy_jx_ix_j - \sum_{k=1}^N{\alpha_k}，\alpha_n >= 0，\sum_{n=1}^N\alpha_ny_n = 0$  
 $\alpha_n > 0$ 对应的数据构成了支持向量，他们参与确定了最终超平面，所以这一模型命名为 Support Vector Machine；当数据投射到高维空间中，将会有很多数据参与确定超平面

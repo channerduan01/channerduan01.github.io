@@ -23,11 +23,19 @@ Gradient descent 梯度下降 又称为 Steepest descent，使用一阶梯度（
 这一方法添加了 regularization item 来优化过拟合，以损失部分信息、降低精度为代价获得更 general 的回归系数。  
 Cost 函数为：$E = \displaystyle\frac{1}{2N}\sum^N_{i=1}(h_{\theta}(x_i)-y_i)^2+\displaystyle\frac{1}{2}||\theta||^2$
 
-####Regularization 的本质是优化了病态XXX
-
 #Lasso回归
 类似 Ridge Regression，对权值向量增加了 penalty，不过这个增加的是 norm-1 的绝对值形式 可以用于 Feature Selection（变量选择）  
 Cost 函数为：$E = \displaystyle\frac{1}{2N}\sum^N_{i=1}(h_{\theta}(x_i)-y_i)^2+\displaystyle\frac{1}{2}|\theta|$
+
+# Coefficient of Determination 可决系数
+用于判定一个 Regressor 的拟合程度，即：
+$$R^2=1-\frac{SS_{res}}{SS_{tot}}$$
+$SS_{res}=\sum_i(y_i-f_i)^2$ 即我们预测的误差 residual sum of squares
+$SS_{tot}=\sum_i(y_i-E[y])^2$ 即数据原始的方差 total sum of squares
+
+可决系数越接近1说明拟合效果越好，反之则说明预测结果比直接预测一个均值也没好多少~
+
+
 
 
 
