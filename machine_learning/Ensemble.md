@@ -80,8 +80,15 @@ select one of the models to make the prediction, in which the choice of model is
 # Random Forest
 从 Ensemble 角度看，其使用 CART 作为子模型，通过 Bagging 集成，直接投票决定整体的最终输出。这一模型非常常见，常用作各种问题的 benchmark。
 
-
 广泛使用的随机森林，是以一系列的 Decision Tree 构成的。 Decision Tree 最有趣的地方是它和神经网络一样是层次结构（当然它简单的多），它通过寻找信息增益最大化的特征来构建模型，而神经网络寻找残差最小的方式构建模型
+
+### Bootstrap
+
+### OOB Out-Of-Bag
+Random Forest 属于 self-validation model，由于 bootstrap 的放回采样机制，可以直接计算 $E_{OOB}$ 来评估模型的 validation error，不需要专门构造验证数据集。
+
+原因是对于 Random Forest 中集成的任一 Desicion Tree，即使在 bootstrap 环节从 N 个样本又放回的采样 N 个样本，也会有约 $\frac{1}{3}$ 的样本（准确是 $\frac{1}{e}$）没有加入这一 Desicion Tree 的训练集，所以可以成为这颗树的 validation 数据。所以从全局上能够整体估计出 $E_{OOB}$。
+
 
 ###Decision Tree
 以下列举相关重要算法，决策树是非线性的模型

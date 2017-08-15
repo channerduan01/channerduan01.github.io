@@ -22,10 +22,10 @@ $$y=h(x)=w^Tx$$
 
 ## 2. 推广到 Generalized Linear Model
 ### 2.1 Motive & Definition
-线性模型有着非常强的局限，主要在于其 response variable $y$ 必须服从高斯分布，即我们的拟合目标 $y$ 的是一个实数 $(-\infty,+\infty)$。这无法应付以下的情况：
+线性模型有着非常强的局限，即 response variable $y$ 必须服从高斯分布；主要的局限是拟合目标 $y$ 的 scale 是一个实数 $(-\infty,+\infty)$。具体来说有俩个问题：
 
-- $y$ 的取值范围有局限；例如 count（游客人数统计恒为正）以及 binary（某个二分类问题）
-- $y$ 的方差依赖 $y$ 的均值（linear regression 假设的方差是 constant）
+- $y$ 的取值范围和一些常见问题不匹配。例如 count（游客人数统计恒为正）以及 binary（某个二分类问题）
+- $y$ 的方差是常数 constant。有些问题上方差可能依赖 $y$ 的均值，例如我预测目标值越大方也越大（预测越不精确）
 
 所以这时我们使用 Generalized Linear Model 来克服这俩个问题。
 一句话定义 GLM 即（from wiki）：
@@ -82,7 +82,7 @@ GLM 中我们最常用到的是 Logistic Regression；即假设 $y$ 服从 Berno
 - loss function : $E=-ylnh(x)-(1-y)ln(1-h(x))$, 和 Linear Model 一样由 MLE 推导得到，3.3 中会给出详细推导过程 
 
 #### Scale Insight 可以给我们更多 link function 的理解：
-- binary Outcome：0 or 1，对应 observed outcome 即 label
+- binary outcome：0 or 1，对应 observed outcome 即 label
 - probability：$[0,1]$，对应 expected outcome，即 $y$ 的分布的 $\mu$
 - odds：$(0,\infty)$，概率和几率可相互转换（$o_a=\displaystyle\frac{p_a}{1-p_a},\ p_a=\displaystyle\frac{o_a}{1+o_a}$）；即是发生概率与不发生概率的比，赌博中常见这一概念，和赔率相关
 - **log-odds/logit：$(-\infty,+\infty)$**，即 $log\displaystyle\frac{p_a}{1-p_a}$
@@ -166,5 +166,52 @@ $$
 这也就是 logistic/sigmoid 函数。剩余其他部分：
 $$u(x)=x,\ h(x)=1,\\g(\eta)=sigmoid(-\eta)=\frac{1}{1+e^{\eta}}=\frac{1}{1+\frac{\mu}{1-\mu}}=(1-\mu)$$
 
-### 4.3 Multinomial Distribution
-作为 Bernoulli 的推广，其 link function（也叫 logit） 和 response function（即 softmax） 都非常相似。
+### 4.3 Categorical Distribution
+作为 Bernoulli 的推广，Categorical 的 link function 和 response function 与前者非常相似。其 response function 是 softmax，所以 logistic/sigmoid 和 softmax 也是一个推广关系。
+
+这里注意一点，Categorical Distribution 即是单次的 Multiple Distribution，后者更常见。（而 Bernoulli Distribution 是单次的 Binomial Distribution）
+
+以下介绍推导过程，分类分布的 分布律，以及 exponential family 形式如下： 
+$$p(x|\mu)=\prod_{k=1}^M\mu_k^{x_k}=exp\{\sum_{k=1}^Mx_kln\mu_k\}$$
+上述表达缺少了一个约束：$\displaystyle\sum_{k=1}^M\mu_k=1$， 通常会改写分布形式来消除这个约束，即我们只确认 $M-1$ 个 $\mu_k$，剩下 1 个 $\mu_k$ 是一个确定的值。当然，我们其实还会有隐含的约束 $0\leq\mu_k\leq1$ 和 $\displaystyle\sum_{k=1}^{M-1}\mu_k\leq1$，这个 Bernoulli 也有。
+下面是包含约束的改写过程：
+$$\begin{aligned}
+exp\{\sum_{k=1}^Mx_kln\mu_k\}
+&=exp\{\sum_{k=1}^{M-1}x_kln\mu_k+(1-\sum_{k=1}^{M-1}x_k)ln(1-\sum_{k=1}^{M-1}\mu_k)\}\\
+&=exp\{\sum_{k=1}^{M-1}x_kln\mu_k-\sum_{k=1}^{M-1}x_kln(1-\sum_{k=1}^{M-1}\mu_k)+ln(1-\sum_{k=1}^{M-1}\mu_k)\}\\
+&=exp\{\sum_{k=1}^{M-1}x_kln\frac{\mu_k}{1-\sum_{k=1}^{M-1}\mu_k}+ln(1-\sum_{k=1}^{M-1}\mu_k)\}\\
+&=(1-\sum_{k=1}^{M-1}\mu_k)exp\{\sum_{k=1}^{M-1}x_kln\frac{\mu_k}{1-\sum_{k=1}^{M-1}\mu_k}\}\\
+\end{aligned}$$
+
+所以 natural parameter 正是：
+$$\eta_k=ln\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}$$
+这里的 $\eta$ 是一个向量，比 Bernoulli 要复杂，因为需要考虑 $M$ 个不同分类。上述公式中的分母其实就是 $M-1$ 以外的那一个分类的概率 $\mu_{k=M}$，所以其实也有点 odds 的意思；这里可以理解为我们随意选择了一个分类作为base，然后用其他分类出现的概率对其求对数比例，把可能性的取值范围扩展到了 $(-\infty,+\infty)$。**作为被选择作base的分类，其 $\eta_{k=M}=ln1=0$** 。
+
+下面推导其 inverse function 即 GLM 使用的 response function，这个过程比 logistic 要复杂很多。首先等价变换 link function：
+$$
+ln\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}=\eta_k\\
+\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}=exp\{\eta_k\}
+$$
+接下来，对上式 left side 累加 M 个分类的值：
+$$left=\sum^{M}_{k=1}\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}=\frac{1}{1-\sum_{j=1}^{M-1}\mu_j}\sum^{M}_{k=1}\mu_k=\frac{1}{1-\sum_{j=1}^{M-1}\mu_j}$$
+对 right side 累加 M 个分类的值：
+$$right=\sum^{M}_{k=1}exp\{\eta_k\}=exp\{\eta_{k=M}\}+\sum^{M-1}_{j=1}exp\{\eta_j\}=1+\sum^{M-1}_{j=1}exp\{\eta_j\}$$
+
+俩个式子结合则有：
+$$\frac{1}{1-\sum_{j=1}^{M-1}\mu_j}=1+\sum^{M-1}_{j=1}exp\{\eta_j\}$$
+重新代入 link function 则有：
+$$
+\eta_k=ln\frac{\mu_k}{1-\sum_{j=1}^{M-1}\mu_j}=ln\mu_k(1+\sum^{M-1}_{j=1}exp\{\eta_j\})\\
+exp\{\eta_k\}=\mu_k(1+\sum^{M-1}_{j=1}exp\{\eta_j\})\\
+\mu_k=\frac{exp\{\eta_k\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}
+$$
+这里对于特殊的 $\mu_{k=M}=\displaystyle\frac{exp\{\eta_{k=M}\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}=\displaystyle\frac{1}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}$
+**最终，softmax 的形式为**：
+$$\mu_k=\frac{exp\{\eta_k\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}$$
+**也可以等价地写作**：
+$$\mu_k=\frac{exp\{\eta_k\}}{\sum^{M}_{j=1}exp\{\eta_j\}}$$
+这个结果近似于 logistic/sigmoid 的：
+$$\mu=\frac{1}{1+exp\{-\eta\}}=\frac{exp\{\eta\}}{1+exp\{\eta\}}$$
+且 logistic/sigmoid 中第二种可能的概率为：
+$$1-\mu=1-\frac{exp\{\eta\}}{1+exp\{\eta\}}=\frac{1}{1+exp\{\eta\}}$$
+可见 logistic/sigmoid 只是 softmax 在 $M=2$ 时的特殊形式。
