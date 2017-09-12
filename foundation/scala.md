@@ -47,3 +47,19 @@ line.flatMap(_.split(" ")).map((_, 1)).reduceByKey(_+_).collect().foreach(printl
   eg.  val tt = ArrayBuffer[(Int, Int)]()
        tt += ((1,1))
   上述必须用两个括号，否则会出问题。第一个括号默认为函数'+='的括号，第二个括号才是Tuple的定义括号~
+
+
+
+
+# 函数式编程与 Scala
+## 解释性编程语言：
+
+- 修改变量
+- 可以赋值
+- 包括很多控制语句，例如：if-then-else、loops、break、continue、return
+
+## 纯函数式编程语言：
+
+- 没有任何可变变量
+- 没有循环（for, while）
+- 使用递归函数控制

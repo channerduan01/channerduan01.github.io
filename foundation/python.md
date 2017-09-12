@@ -27,6 +27,8 @@ Python 积累
 - index.values  具体的索引值 array
 - values		查看数据结构中的 values，看到的是 array
 
+- .to_frame 可以转为只有单列的 DataFrame
+
 ### DataFrame
 DataFrame 类似是以 Series 组成的字典，具有行索引和列索引
 - index			查看数据结构中的 keys，Index 数据结构
