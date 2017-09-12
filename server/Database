@@ -42,9 +42,16 @@ Database
 # 表的分区
 
 # MySql 存储引擎，MyISAM与InnoDB区别
+可以使用指令 show engines; 查看当前 MySql 支持的存储引擎，以及默认使用的存储引擎。
+详情见 http://blog.csdn.net/xifeijian/article/details/20316775
 ## MyISAM 类型
+MyISAM 类型的表**强调的是性能**，其执行数度比InnoDB类型更快，但是不提供事务支持、外部键和行级锁等高级数据库功能。
+主要承担读操作的话，使用 MyISAM 是首选，读性能强于 InnoDB。
 
 ## InnoDB 类型
+InnoDB 提供事务支持、外部键和行级锁等高级数据库功能
+- InnoDB不支持FULLTEXT类型的索引
+- InnoDB 中不保存表的具体行数，select count(*) from table时 InnoDB 需要扫一遍全表，而 MyISAM 直接读取size就可以
 
 # 常用操作
 建立连接				mysql -h localhost -P 3306 -u root -p123（localhost 可换成远程 ip；-p 后面不要加空格）

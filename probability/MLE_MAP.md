@@ -9,9 +9,7 @@
 
 - MLE 思想，被应用于机器学习十大算法之一 EM算法（期望最大化，K-means 实际上使用了 EM；EM 其他文章再展开讨论）
 
-
 本文将会详细阐述 最大似然 的思想，并展开讨论 LS 、MAP 与最大似然的关联。
-
 
 ## 1. MLE 最大似然估计 
 MLE (Maximum Likelihood Estimation) 
