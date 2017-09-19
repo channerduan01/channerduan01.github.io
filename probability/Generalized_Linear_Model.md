@@ -108,15 +108,20 @@ g'(z)&=\frac{-(e^{-z}*-1)}{(1+e^{-z})^2}=\frac{e^{-z}}{(1+e^{-z})^2}\\
 &=g(z)-g(z)^2=g(z)(1-g(z))
 \end{aligned}$$
 
-另外，这一函数还有一些其他的解释，例如生态学模型。
+另外，这里先证明一个有趣的特性 $g(-z)=1-g(z)$（为后续章节证明流程铺垫~）
+$$1-g(z)=1-\frac{1}{1+e^{-z}}=\frac{e^{-z}}{1+e^{-z}}=\frac{1}{1+e^{z}}=g(-z)$$
 
-### 3.3 loss function 及 gradient 推导
+logistic/sigmoid 函数还有一些其他的解释，例如生态学模型。
+
+### 3.3 LR 的 loss function
+#### 3.3.1 标准套路
 本节详细完成 logistic regression 剩下部分的阐述。假设我们观察到了数据集 $(x_i, t_i)$ 包含 $N$ 个样本，$x_i$ 表示某一样本的特征向量，$t_i=0\ or\ 1$ 表示这一样本的真实类别（observed outcome）。另外定义 $y_i=h(x_i)$ 为模型的输出结果（expected outcome）。我们假设 $t_i$ 服从 Bernoulli 伯努利分布（$Bern(x|\mu)=\mu^{x}(1-\mu)^{1-x}$），则可以写出似然函数如下：
 $$L(D|w)=p(t|w)=\prod_{i=1}^Ny_i^{t_i}(1-y_i)^{1-t_i}=\prod_{i=1}^Nh(x_i)^{t_i}(1-h(x_i))^{1-t_i}$$
 对似然函数取对数化简如下：
 $$l=lnp(t|w)=\sum_{i=1}^N\{t_ilnh(x_i)+(1-t_i)ln(1-h(x_i))\}$$
 所以 loss fucntion 可以写为（最大化似然 转 最小化cost）：
-$$J=-l=\sum_{i=1}^N\{-t_ilnh(x_i)-(1-t_i)ln(1-h(x_i))\}$$
+$$J=-l=\sum_{i=1}^N\{-t_ilnh(x_i)-(1-t_i)ln(1-h(x_i))\}$$**这是基于 binomial 二项分布推导出来的 loss，所以又被称为 negative binomial log-likelihood**。
+
 其中 $h(x)$ 依照 GLM 理论，依据 response function 展开为：$$h(x)=g^{-1}(w^Tx)=\frac{1}{1+e^{-w^Tx}}$$
 为 loss function $J$ 带入 $h(x_i)$ 对 weight vector $w$ 求导：
 $$\begin{aligned}
@@ -128,6 +133,40 @@ $$\begin{aligned}
 \end{aligned}$$
 所以 Logistic Regression 与 Linear Regression 更新公式（Batch Gradient Descent）是类似的，唯一不同点在于不同的 response function $h(x)$ ：
 $$w^{new}=w-\lambda\frac{\partial\ J}{\partial\ w}=w-\lambda\sum_{i=1}^{N}(h(x_i)-t_i)x_i=w-\lambda\sum_{i=1}^{N}(y_i-t_i)x_i$$
+
+#### 3.3.2 其他套路
+这里专门强调一下，有一些论文里面会使用其他形式的等价的 negative binomial log-likelihood：
+$$J=\sum_{i=1}^Nln(1+\exp\{-t_iz_i\})$$
+这个形式要简洁很多，但实际和上小节中 loss function $J=\sum_{i=1}^N\{-t_ilnh(x_i)-(1-t_i)ln(1-h(x_i))\}$ 完全等价的，唯一的区别是：这里使用的 label $t_i=-1/+1$ 而非上一小节的 $t_i=0/1$。这种表达有一个好处，$z_i$ 是 linear predictor，上小节有 $z_i=w^Tx_i$，但是这里更 general，可以用其他方式定义来定义这个 linear predictor，例如 GBDT 中的函数加和，其实这个 loss 就是从 GBDT 论文上看到的~以下将证明这一套路与标准讨论等价：
+
+首先，把原 loss 展开 $h(x_i)=g^{-1}(w^Tx_i)=g(z_i)$（把 inverse 符号去掉了，这里不需要再强调了），且根据 sigmoid 的 $g(-z)=1-g(z)$，有：
+$$
+J=\sum_{i=1}^N\{-t_ilnh(x_i)-(1-t_i)ln(1-h(x_i))\}\\
+=\sum_{i=1}^N\{-t_iln(g(z_i))-(1-t_i)ln(g(-z_i))\}
+$$
+对 label $t_i$ 分情况展开：
+$$
+J_i=\begin{cases}
+-ln(g(z_i))& if\ t_i=1\\
+-ln(g(-z_i))& if\ t_i=0
+\end{cases}
+$$
+切换到 $t_i=-1/+1$（这是唯一的不同哦）：
+$$
+J_i=\begin{cases}
+-ln(g(t_iz_i))& if\ t_i=+1\\
+-ln(g(t_iz_i))& if\ t_i=-1
+\end{cases}
+$$
+显然可以对原 loss 整合并展开为：
+$$
+J=\sum_{i=1}^N\{-ln(g(t_iz_i))\}=\sum_{i=1}^N\{-ln(\frac{1}{1+\exp\{-t_iz_i\}})\}=\sum_{i=1}^N\{ln(1+\exp\{-t_iz_i\})\}
+$$证毕。
+
+loss 的 gradient 当然也是完全等价的，这里简单展开部分结果：
+$$
+\frac{\partial J_i}{\partial z}=\frac{1}{1+\exp\{-t_iz_i\}}\exp\{-t_iz_i\}(-t_i)=\frac{-t_i}{1+\exp\{t_iz_i\}}
+$$
 
 
 ## 4. Exponential Family
@@ -205,7 +244,7 @@ $$
 exp\{\eta_k\}=\mu_k(1+\sum^{M-1}_{j=1}exp\{\eta_j\})\\
 \mu_k=\frac{exp\{\eta_k\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}
 $$
-这里对于特殊的 $\mu_{k=M}=\displaystyle\frac{exp\{\eta_{k=M}\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}=\displaystyle\frac{1}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}$
+这里对于特殊的 $\mu_{k=M}=\displaystyle\frac{exp\{\eta_{k=M}\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}=\displaystyle\frac{1}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}$，所以对任意分类上式都是成立的。
 **最终，softmax 的形式为**：
 $$\mu_k=\frac{exp\{\eta_k\}}{1+\sum^{M-1}_{j=1}exp\{\eta_j\}}$$
 **也可以等价地写作**：

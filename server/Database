@@ -42,7 +42,7 @@ Database
 # 表的分区
 
 # MySql 存储引擎，MyISAM与InnoDB区别
-可以使用指令 show engines; 查看当前 MySql 支持的存储引擎，以及默认使用的存储引擎。
+可以使用指令 show engines; 查看当前 MySql 支持的存储引擎，以及默认使用的存储引擎。在我们创建具体表的时候，可以指定
 详情见 http://blog.csdn.net/xifeijian/article/details/20316775
 ## MyISAM 类型
 MyISAM 类型的表**强调的是性能**，其执行数度比InnoDB类型更快，但是不提供事务支持、外部键和行级锁等高级数据库功能。
@@ -70,7 +70,6 @@ InnoDB 提供事务支持、外部键和行级锁等高级数据库功能
 字符匹配			LIKE, NOT LIKE（通配符 '%' 代表任意长度 [0,无穷) 字符串；'_' 代表任意单个字符；ESCAPE '\' 换码符）
 空　　值			IS NULL, IS NOT NULL（不能使用 = NULL 代替）
 多重条件			AND, OR（AND 优先级高于 OR）
-正则式匹配			REGEXP, eg. SELECT * FROM fiberbox WHERE field REGEXP '1740 |1938 |1940 '
 
 ## 典型查询
 SELECT子句			指定要显示的属性

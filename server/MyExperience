@@ -10,6 +10,8 @@
 （额外要点：	/dev/null 是系统的垃圾桶，输出定位到这里的话，有去无回；这个设备怎么读都是全 0）
 - 最后的 &			标识这次启动在后台运行，这里貌似和 nohup 效果是重复的，不是必要的
 
+# 编写shell脚本时，可以直接在window上编译后paste到linux的vim中；但是一般不能直接把window下编辑的shell上传到linux上运行，因为line endings不一致，脚本可能无法解析，需要设置编辑器的line endings为linux格式才行。(例如 Sublime 中在View->Line Endings中设置为Unix)
+
 # 程序和脚本后台运行命令 nohup 和 &
 - nohup 任务持续执行：使用 nohup 具体提交相关命令（一般是启动某脚本），不响应任何中断，所以执行不会因为shell关闭/账户推出中断；常与 & 连用，启动后台持续运行的任务，或者拉起一些执行时间较长，我们不可能一直在shell上等待的脚本
 - & 后台执行：命令（一般是启动某脚本）后添加 & 符号，会把命令交给 linux 内核去运行一个进程任务，任务后台执行；但是仅仅是后台，相关shell关闭的话，相关任务也会中断
@@ -127,20 +129,9 @@ ls | xsel -bi
 
 ## TLS（Transport Layer Security）安全传输层协议
 
-scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_max_click ./
-scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_outer_click ./
-
-scp adadmin@10.203.32.241:/data/adadmin/workspace/MaxLogToHDFS/data/clickStore/data_max_show ./
-
-scp adadmin@10.203.32.241:/da1/adadmin/workspace/MaxLogToHDFS/databk/2017-02-26/data_max_show ./
-
 scp adadmin@10.129.100.55:/home/adadmin/MediaGrading/data/feature_adspace_$date ./data
-
 scp adadmin@10.203.32.113:/da1/adadmin/workspace/dataPretreatment/databk/2017-03-11/test ./
-
 scp adadmin@10.203.32.148:/da1/adadmin/workspace/OnlineFilter/offline_patch/mid_bl/2017-07-12/filter_clickId.log.2017071213 ./
-
-
 scp adadmin@10.203.32.148:/da1/adadmin/workspace/OnlineFilter/offline_patch/mid_bl/20170712/filter_clickId.log.2017071213 ./
 
 # Shell 脚本相关
