@@ -1,11 +1,16 @@
-# GBDT 详解
+# GBM 与 GBDT 与 XgBoost
 Gradient Boost Decision Tree 是当前非常流行的机器学习算法（监督学习），本文将从渊源起逐层讲解 GBDT，并介绍目前流行的 XgBoost。另有“Adaboost 详解”、“GLM(广义线性模型) 与 LR(逻辑回归) 详解”为本文之基础。
 
 ## 0. Hello World
 这里列举一个最简单常见的 GBDT 算法。
-回归问题，是通过函数 $F(x)$ 拟合目标 $y$；对于 GBDT，每一轮迭代 $t$ 会寻找一个子函数函数 $arg \min_{f_t(x)}(f_t(x)-(F_{t-1}(x)-y))^2$ 集成到 $F(x)$；子函数拟合的目标是模型目前的 residual $(F_{t-1}(x)-y)$，所以宏观上 GBDT 可以会关注到之前迭代中没有处理好的样本，来进一步优化细节，达到越来越好的拟合。（当然也会有 overfitting 的问题了~）
+对于回归问题，GBDT 通过一组 decision tree 直接组成的 ensemble $F(x)=\sum_{t=1}^T f_t(x)$ 拟合目标 $y$。
 
-GBDT 中其实包含了非常广泛的思想和应用，本文将详细阐述。
+每一轮迭代 $t$ 会寻找一个子函数 $f_t$ 集成到 $F(x)$，方法如下：
+$$arg \min_{f_t(x)}(f_t(x)-residual)^2,\ residual=(F_{t-1}(x)-y)$$
+
+residual 即上一轮结束后，整体模型的残差；所以 GBDT 会关注到之前迭代中没有处理好的样本，一步步优化细节，以达到越来越好的拟合（当然也会有 overfitting 的问题）。
+
+实际上，GBDT 中其实包含了非常广泛的思想和应用，本文将详细阐述。
 
 ## 1. Some Foundations
 GBDT 包含了多种机器学习常见的概念方法，这里将分别介绍几个重要的基础概念。
@@ -22,9 +27,9 @@ $$\min_{||v||=1}E(w_t+\eta v)\approx E(w_t)+\eta v\nabla E(w_t)$$
 ### 1.2 Newton Method
 牛顿法实际上就是在 Gradient Descent 方法上更进一步，通过 loss function 的二阶导数信息来获取最优的增量 $\Delta w$。
 首先对 loss function 做二阶泰勒展开：
-$$E(w_t+\Delta w)=E(w_{t+1})\approx g(w_{t+1})= E(w_t)+E'(w_t)(w_{t+1}-w_t)+\frac{1}{2}E''(w_t)(w_{t+1}-w_t)^2$$
-接下来是一个 trick，这里对 $g(w_{t+1})$ 做最小化来近似原函数的最小化，其中原函数的函数值及一、二阶导数都被当做常数：$$\frac{d\ g(w_{t+1})}{d\ w_{t+1}}=E'(w_t)+E''(w_t)(w_{t+1}-w_t)=0\\
-w_{t+1}=w_t-\frac{E'(w_t)}{E''(w_t)}$$如上直接求得最优的增量 $\Delta w=-E''(w_t)^{-1}E'(w_t)$，其中一阶导数常使用 $g$ 表示梯度（多维度时为向量)，二阶导数常使用 $H$ 表示 Hessian 海森矩阵（多维度时为矩阵），所以标准的更新公式如下：
+$$E(w_t+\Delta w)\approx E(w_t)+E'(w_t)\Delta w+\frac{1}{2}E''(w_t)\Delta w^2=g(w_t+\Delta w)$$
+接下来是一个 trick，这里对 $g(w_t+\Delta w)$ 做最小化来近似原函数的最小化，其中原函数的函数值及一、二阶导数都被当做常数：$$\frac{d\ g(w_t+\Delta w)}{d\ \Delta w}=E'(w_t)+E''(w_t)\Delta w=0\\
+\Delta w=-\frac{E'(w_t)}{E''(w_t)},\ w_{t+1}=w_t-\frac{E'(w_t)}{E''(w_t)}$$如上直接求得最优的增量 $\Delta w=-E''(w_t)^{-1}E'(w_t)$，其中一阶导数常使用 $g$ 表示梯度（多维度时为向量)，二阶导数常使用 $H$ 表示 Hessian 海森矩阵（多维度时为矩阵），所以标准的更新公式如下：
 $$w_{t+1}=w_t-H_t^{-1}g_t=w_t+d_t$$其中 $d_t=-H_t^{-1}g_t$ 被称为 **牛顿方向**，通常直接按上式更新即可，也可以再引入一个步长系数乘以牛顿方向。
 
 牛顿法通常收敛速度比梯度下降方法快，但是需要计算二阶导数，且要求海森矩阵正定，所以后续衍生出了一系列近似的拟牛顿法。
@@ -138,14 +143,13 @@ $$\begin{aligned}
 &endFor
 \end{aligned}$$
 
-- 其中负梯度 
-$$\begin{aligned}
+- 其中负梯度求解过程如下：$$\begin{aligned}
 \tilde{y_i}\ &=-[\frac{\partial L(y_i,F(x_i))}{\partial F(x_i)}]_{F(x)=F_{t-1}(x)}\\
 &=-\frac{-2y_i\exp\{-2y_iF_{t-1}(x_i)\}}{1+\exp\{-2y_iF_{t-1}(x_i)\}}\\
 &=\frac{2y_i}{1+\exp\{2y_iF_{t-1}(x_i)\}}
 \end{aligned}$$
 
-- 其中 terminal node 最优值的计算公式 $$\gamma_{jt}=\frac{\sum_{x_i\in R_{jt}}\tilde{y_i}}{\sum_{x_i\in R_{jm}}\tilde{|y_i|}(2-\tilde{|y_i|})}$$ 是对步长的优化目标
+- 其中 terminal node 最优值的计算公式：$$\gamma_{jt}=\frac{\sum_{x_i\in R_{jt}}\tilde{y_i}}{\sum_{x_i\in R_{jm}}\tilde{|y_i|}(2-\tilde{|y_i|})}$$ 是对步长的优化目标
 $$\gamma_{jt}=arg \min_{\gamma}\sum_{x_i\in R_{jt}}log(1+\exp\{-2y_i(F_{t-1}(x_i)+\gamma)\})$$ 利用 Newton-Raphson step 近似推导出的结果。
 
 另外，这里额外提一下 K 分类的问题。K 分类需要训练 K 组不同的树（即每轮迭代需要训练 K 颗不相关的树）；每一组树结果叠加成 linear predictor 后输出一个判别概率，这和广义线性模型中处理 K 分类的思路是一模一样的。
