@@ -17,7 +17,7 @@ Spark 相比传统的 MapReduce 模式，有如下优势：
 ## 1.1 物理架构
 物理结构描述了 Spark 集群的物理构成。
 <center>
-<img src="http://img.blog.csdn.net/20170614120215055?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQ2RkMnhk/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="80%" height="80%" />
+<img src="http://img.blog.csdn.net/20170614120215055?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQ2RkMnhk/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="60%" height="60%" />
 Figure 1. Physical Structure of Spark
 </center>
 
@@ -40,7 +40,7 @@ Driver 负责创建并持续维护本地基本执行环境 SparkContext（1.2中
 Runtime 结构指的是 Spark 具体执行 Application 时，在集群上动态创建出来的执行体的结构；包括 Driver 上的 SparkContext 和 参与执行的 Worker 上的 Executor。他们的生命周期都贯穿整个 Application。
 
 <center>
-<img src="http://img.blog.csdn.net/20170614120303665?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQ2RkMnhk/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="80%" height="80%" />
+<img src="http://img.blog.csdn.net/20170614120303665?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvQ2RkMnhk/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" width="60%" height="60%" />
 Figure 2. Runtime Structure of Spark
 </center>
 
@@ -211,11 +211,14 @@ partition 数量缩减会严重影响后续的执行效率（影响了并发能�
 ## 3.3 DEBUG
 这里简单列举一些我遇到过的 bug，我只用 scala 写 Spark 应用，所以一下都是 scala 跑的时候遇到的问题。（并且我使用的集群是 spark 1.6）
 
+### 3.3.1 任务卡死
+一般任务卡死跑不动都是集群上的节点卡住了，很可能是**skewness 数据倾斜**导致某些节点的数据处理量远远超过其他节点。这种时候可以看到当前 Stage 只有一个 Task 在 Run，所以只有一个 node 并发，极大浪费性能，彻底卡住一段时间后可能出现 crash：“Caused by: java.lang.RuntimeException: java.lang.IllegalArgumentException: Size exceeds Integer.MAX_VALUE”，这是 spark 的一个经典错误，很有可能就是 shuffle 的时候有太大的 key 或 value 造成的（当然，此 crash 也有可能涉及 序列化、反序列化、cache 等环节原因）。
+
+这是时候可以把涉及到的 key 维度的 distribution 打印出来检查一下，确认原因后想办法均衡数据。
+
 ### 3.3.1 序列化失败
 我们创建对象（new 出来）的话，一般的对象是无法序列化的，必须要实现序列化接口（相关 class 继承 Serializable）才能序列化。new 出来的对象放到 UDF 或者 UDAF 函数中参与计算的话，动态创建出来的对象无法发送到集群，就会出现 序列化失败 的问题（IDE 的编译的时候是检查不出来这种错误的）。不要 new 或者 给对象加上序列化可以解决这个问题。
 
 ### 3.3.2 Driver 造成的任务卡死
-一般任务卡死跑不动都是集群上的节点卡主了，很可能是数据倾斜导致某些节点的数据处理量远远超过其他节点，然后把整个任务卡住了。但是某些时候 Driver 可能也会遇到瓶颈把自己卡死。我遇到过的情况是原始均匀分布在 HDFS 中的一个超大数据文件（TB级）无法载入，即使我申请数百节点（TB级内存）却无法完成简单的数据清洗载入，Application 一启动就卡住，直到超时挂掉都跑不出进度。这是由于 Driver 追踪上万 partition 压力太大，最终在数据读取操作后增加 coalesce 压缩 partition 到千量级解决问题。 
-
-
+但是某些时候 Driver 可能也会遇到瓶颈把自己卡死！我遇到过的情况是原始均匀分布在 HDFS 中的一个超大数据文件（TB级）无法载入，即使我申请数百节点（TB级内存）却无法完成简单的数据清洗载入，Application 一启动就卡住，直到超时挂掉都跑不出进度。这是由于 Driver 追踪上万 partition 压力太大，最终在数据读取操作后增加 coalesce 压缩 partition 到千量级解决问题。 
 
