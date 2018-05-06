@@ -23,6 +23,8 @@ $\displaystyle\frac{2TP}{2TP+FN+FP}$
 
 注意！AUC 对不平衡数据不敏感，这是一大优势。
 
+实际上AUC和Mann-Whitney U test有密切的联系；这个意义上说，AUC就是从所有正样本中随机选择一个样本，并从所有负样本中随机选择一个样本，然后用分类器分别预测正样本概率p1和负样本概率p2，p1>p2的概率就是AUC。所以AUC反应的是分类器对样本的排序能力。
+
 # PR曲线，Precision-Recall Curve 
 Precision 为y轴，Recall 为横轴，向右上的弧形越大越好；即高度 Recall 的时候也能保持高度 Precision。
 
