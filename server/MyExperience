@@ -110,6 +110,9 @@ whereis 则是列举出所有的相关文件
 解压：tar zxvf FileName.tar.gz
 压缩：tar zcvf FileName.tar.gz DirName
 
+## 检查用户启动的程序（离职时候被运维审查到~）
+lsof -u XXXX; XXXX 为需要检查的用户名，可以检查到用户有哪些程序正在跑~
+
 ## 输出复制到剪切板指令 xsel：
 ls | xsel -bi
 
