@@ -1,7 +1,5 @@
 # Sequence Modeling of Deep Learning
 
-
-
 **Several different types of Sequence Modeling (the mapping from x to y):**
 
 - 1(even 0) to Seq: Music Genereation, Poems Generation
@@ -152,13 +150,47 @@ Once a RNN Language Model is trained, novel samples could easily be generated fr
 For the first word, just random sample the $P(y_{t=1})$. Then, the last word $P(y_{t-1})$ can be random sampled and choosed one as input to predict $P(y_t)$. It is easy to generate a whole sentence. It is really cool that machine knows how to write absolutely novel sentence by itself~
 
 
-## 3. Word Embedding
+## 3. Sequence to Sequence Model
+**just based on RNN for language model.**
 
-### A very key insight is transfer learning
-The word embedding itself can be trained with very large corpus. Thus it absorb so much information and may known more than millions words.
+[Sutskever et al., 2014. Sequence to sequence learning with neural networks]
 
-After that, we can uses embedding in daily scence like sentiment recognition with tiny training set(the cost of label is much higher~) to get very good generalization.
+[Cho et al., 2014. Learning phrase representations using RNN encoder-decoder for statistical machine translation]
 
+### 1. Difference
+
+Language Model: $P(y_1,y_2,...,y_{T_y})$, targets the existence probability of sentences. And it can even be used to generate novel sequence.
+
+Sequence to Sequence (eg. Machine Translation): $P(y_1,y_2,...,y_{T_y}|x_1,x_2,...,x_{T_x})$, it is actually conditional language model, which encodes the $x$ sequence into a dense vector (representation of the whole $x$), then decodes to find the most likely $y$ for this dense vector condition.
+
+
+They are really similar and there are just 2 additions of Machine Translation:
+
+- Language Model uses all zero $a_0$ as the first input (thus first output is just prior), but Machine Translation uses the representation vector as $a_0$ which is the result encode network.
+- Language Model may be used to sample and generate different novel sequence, but Machine Translation only cares the most likely translation $y$ using beam search. It just depends on usage scenario~
+
+
+### 2. Beam Search
+
+The target of this search algorithm is just below:
+
+$$arg max_{y} P(y_1,y_2,...,y_{T_y}|x_1,x_2,...,x_{T_x})$$
+
+Compare to other search algorithm:
+
+- Exhaustive Search is impossible because the exponential possible of sentence ($10k^{10}$ for 10k vocabulary and 10 words sentence)
+- Greedy Search is really limited that only consider one step furthers.
+
+Beam Search is something between them.
+
+
+#### Beam Width
+
+$$arg max_{y_1,y_2,...,y_t} P(y_t|x_1,x_2,...,x_{T_x})$$
+
+For any search iterantion $t$, Beam Search keeps the top $n$ results, which called *beam width*. Thus the search scale is fixed and it degenerates to Greedy Search when beam width = 1.
+
+Beam Search with a width 3 to 10 always do a lot better than simple Greedy Search in Machine Translation scenario. In practice, the nerual network is copied beam width times and concurrently run to make efficient parallize.
 
 
 
