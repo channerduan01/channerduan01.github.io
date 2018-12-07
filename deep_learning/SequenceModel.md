@@ -161,7 +161,7 @@ For the first word, just random sample the $P(y_{t=1})$. Then, the last word $P(
 
 Language Model: $P(y_1,y_2,...,y_{T_y})$, targets the existence probability of sentences. And it can even be used to generate novel sequence.
 
-Sequence to Sequence (eg. Machine Translation): $P(y_1,y_2,...,y_{T_y}|x_1,x_2,...,x_{T_x})$, it is actually conditional language model, which encodes the $x$ sequence into a dense vector (representation of the whole $x$), then decodes to find the most likely $y$ for this dense vector condition.
+Sequence to Sequence (eg. Machine Translation): $P(y_1,y_2,...,y_{T_y}|x_1,x_2,...,x_{T_x})$, it is actually *conditional language model*, which encodes the $x$ sequence into a dense vector (representation of the whole $x$), then decodes to find the most likely $y$ for this dense vector condition.
 
 
 They are really similar and there are just 2 additions of Machine Translation:
@@ -181,24 +181,60 @@ Compare to other search algorithm:
 - Exhaustive Search is impossible because the exponential possible of sentence ($10k^{10}$ for 10k vocabulary and 10 words sentence)
 - Greedy Search is really limited that only consider one step furthers.
 
-Beam Search is something between them.
+Beam Search is something between them, and it is not guaranteed to find exact maximum (compare to BFS/DFS). 
+And notice: beam search is used to search the most possible result (serving), the whole model is already trained before beam search. It is just a search algorithm (strategy) and nothing about optimization or training.
 
 
 #### Beam Width
+For any search iterantion $t$:
 
-$$arg max_{y_1,y_2,...,y_t} P(y_t|x_1,x_2,...,x_{T_x})$$
+$$arg max_{y_t} P(y_1,y_2,...,y_t|x)$$
 
-For any search iterantion $t$, Beam Search keeps the top $n$ results, which called *beam width*. Thus the search scale is fixed and it degenerates to Greedy Search when beam width = 1.
+$$P(y_1,y_2,...,y_t|x)=P(y_1,y_2,...,y_{t-1}|x)*P(y_{t}|y_1,y_2,...,y_{t-1},x)$$
 
-Beam Search with a width 3 to 10 always do a lot better than simple Greedy Search in Machine Translation scenario. In practice, the nerual network is copied beam width times and concurrently run to make efficient parallize.
+Beam Search keeps the top $n$ results, which called *beam width*. Notice: different catch may have total different sequence (they do not share prefix such as $y_1,\ y_2$). The computation scale is fixed and it degenerates to Greedy Search when beam width = 1.
 
+Beam Search with a width 3 to 10 always do much better than simple Greedy Search in Machine Translation scenario. The larger width gets more possible sequence, thus the value of it is a tradeoff between precision and computation cost. For production systems, width 10 is  enough; but for research width can be 1000. 
 
-
-
-
-
+In practice, the nerual network is copied beam width times and concurrently run to make efficient parallize.
 
 
+#### Maximum Log-Likelihood rather than original Likelihood
+Actually, the search target conditional probability is below:
+
+$$arg\ \max_y P(y_1,y_2,...,y_T|x)=\prod_{t=1}^TP(y_t|y_1,...,y_{t-1})=P(y_1|x)*P(y_2|y_1,x)*P(y_3|y_1,y_2x)*...*P(y_T|y_1,y_2,...,y_{T-1},x)$$
+
+Thus directly multiplications of many small probability results in too small float value and cause underflow. A common solution is just taking log likelihood:
+
+$$arg\ \max_y logP(y_1,y_2,...,y_T|x)=\sum_{t=1}^TlogP(y_t|y_1,...,y_{t-1})$$
+
+Log function is strictly monotonically increasing which keeps the same max result for orginal probabiblity. And summation of log probability is numerically stable. (but may cause overflow~)
+
+#### Length Normalization (get much better result)
+There is length bias of the condicitional probability. The longer sequence unnaturally tends to have lower probability, because the probability of extra word definitely less than 1 (and log-value less than 0).
+
+To deal with this bias, the search target normalized as below:
+
+$$arg\ \max_y \frac{1}{T^{\alpha}}logP(y_1,y_2,...,y_T|x)$$
+
+$\alpha$ is a hyper-parameter to control normalization strength:
+
+- $\alpha=0$ is no normalization
+- $\alphra=1$ is full length normalization
+- $\alphra=0.7$ is a softer
+
+#### Complete Workflow
+For a Beam Width $B=3$, and a maximum search length $T=20$, beam search keeps top 3 results for each length(1 to 20) using log-likelihood. Then the length normalized score is calcuted for these 3*20 result and the most possible result is chosen. A sequence ends with token <EOS> maybe prefered.
+
+#### Error Analysis on Beam Search
+It helps to figure out the error is the problem of beam search or RNN encode-decode Model, and can be used to tuned hyper-parameters such as beam width and $\alpha$ of length normalization.
+
+For $P(y|x)$ in machine translation, supposed $y^*$ is the best human translation (label), $\hat{y}$ is the most possible result found by beam search. $P(y^*|x)$ and $P(\hat{y}|x)$ can be calcuted using encode-decode model. When these 2 sequence not equal:
+
+- $P(y^*|x)>P(\hat{y}|x)$: fault of beam search.
+- $P(y^*|x)<P(\hat{y}|x)$: fault of RNN.  (maybe not proper length normalization)
+
+You can go through the whole dataset and have statistics on which one cause more faults.
 
 
 
