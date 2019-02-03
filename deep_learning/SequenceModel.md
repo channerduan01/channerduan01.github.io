@@ -220,8 +220,8 @@ $$arg\ \max_y \frac{1}{T^{\alpha}}logP(y_1,y_2,...,y_T|x)$$
 $\alpha$ is a hyper-parameter to control normalization strength:
 
 - $\alpha=0$ is no normalization
-- $\alphra=1$ is full length normalization
-- $\alphra=0.7$ is a softer
+- $\alpha=1$ is full length normalization
+- $\alpha=0.7$ is a softer
 
 #### Complete Workflow
 For a Beam Width $B=3$, and a maximum search length $T=20$, beam search keeps top 3 results for each length(1 to 20) using log-likelihood. Then the length normalized score is calcuted for these 3*20 result and the most possible result is chosen. A sequence ends with token <EOS> maybe prefered.
@@ -236,6 +236,32 @@ For $P(y|x)$ in machine translation, supposed $y^*$ is the best human translatio
 
 You can go through the whole dataset and have statistics on which one cause more faults.
 
+## Attention mechanism
+
+The intuition of attention mechanism also comes from machine translation. For example, when we tranform a long English sentence to China, we would like to focus the begining part first rather than memory the whole sentence right away. It is just the difference between 'Sequence to Sequence' with 'Attention'.
+
+### Common Model Structure
+For machine translation problem, the model is consist of 3 parts: 
+
+#### pre-attention Bi-LSTM
+It absorts all information from input sequence with length $T_x$, and transform the sequence to cell states $a^{<1>},a^{<2>},...,a^{<T_x>}$. Moreover, each cell state is a concatenation of forward-direction activation and backward-direction activation to capture more sequence information.
+
+It is a separate procedure(to process raw data) that just running one time before the rest 2 steps.
+
+#### attention mechanism (The key!)
+helping post LSTM pay more attention on some parts of the results of pre LSTM. 
+To compute each input for the post LSTM $t \in [1,T_y]$, there are several steps:
+
+- the last state $s^{t-1}$ of post LSTM is needed with the output results from pre-attention Bi-LSTM $a^{<1>},a^{<2>},...,a^{<T_x>}$
+
+- the attention varables $a^{t,t'}$ is calculated by $softmax([[s^{t-1},a^{<1>}],[s^{t-1},a^{<2>}],...,[s^{t-1},a^{<T_x>}]]W_{attention})$, which is a distribution of the importance $a^{<t,1>},a^{<t,2>},...,a^{<t,T_x>}$ for the results of pre LSTM.
+
+- multiplying the attention varables $a^{<t,t'>}$(it is actually the importance weights) with raw results from pre-attention Bi-LSTM and sum up to produce attention results $context^{<t>}=\sum_{t'=1}^{T_x}a^{<t,t'>}a^{<t'>}$
+
+The key point is that: $s^{t-1}$ influences the attention distribution, then influences output of attention layer indirectly.
+
+#### post-attention LSTM
+It is a common LSTM that goes forward from left to right. For each time step, the inputs include the last state $s^{t-1}$ and attention result $context^{<t>}$. It really works with attention mechanism that gives the last state $s^{t-1}$ and gets $context^{<t>}$ back.
 
 
 

@@ -179,7 +179,7 @@ boys	: s->z (因为 oi 是浊音)
 
 - 冠词 a (ei->$$) / the ($$->$$) 有重弱读发音区分；这个是最常见的，之前老师都教过的
 - 介词 如 and(不仅回归中央元音，辅音d也干掉～) as but at that from of for to(这个to需要区分后面是否接元音，接元音要则不能太弱)
-- 代词 如 he(去辅音) him(去辅音) his(去辅音) them us you(仅是减少长度) she(仅是减少长度) her
+- 代词 如 he(去辅音，作 i) him(去辅音，作做 im) his(去辅音，iz) them us you(仅是减少长度) she(仅是减少长度) her
 - 情态动词 如 can should must shall would could will
 - be动词 am are was were have had do(这个do需要区分后面是否接元音，接元音要则不能太弱) dose been(仅是减少长度)
 
@@ -288,7 +288,7 @@ I miss you. -> missyou
 - d 在 p/b/m 前 同化为 b ; good man -> goob man
 - n 在 p/b/m 前 同化为 m ; London Bridge -> Londom Bridge
 - t 在 k/g 前 同化为 k ; that car -> thak car 
-- d 在 k/g 前 同化为 g ; good coffee -> gook coffee
+- d 在 k/g 前 同化为 g ; good coffee -> goog coffee
 - n 在 k/g 前 同化为 $$ ; ten cars -> teng cars
 
 这6调规则看似很复杂，本质非常简单。就是 t d n 这一系辅音结尾，针对 p b m 一系 或者 k g 一系 开头的音同化过去。
@@ -302,6 +302,137 @@ High Street Kensington -> High Streek Kensington
 
 
 
+# 语调
+
+都需要从重音节开始，重音前的部分都是平调的。
+
+## 降调
+默认语调，比较正经、严肃。
+常用于陈述，感叹，Wh-questions，命令，句尾。
+也可以用于 Yes-No Question，表示对答案比较迫切。
+
+## 升调
+需要从重音节开始，重音前的部分都是平调
+常用于疑问句，Yes-No Question，表不确定性，再次确认，感兴趣，句子未结束
+
+## 降升调（主要是在英音中很常见）
+主要是降调，降完再升上去一点点。
+是从重音节开始，不过可能还是会设计多个音节；多音节的时候前面的音节做降调，后面的音节再升上来。
+表示言外之意，话没说完，后面往往会接 but 句式。
+
+这里不局限在单个词汇中完成降升调，可能在一个短语中，例如： I think(降调) so(升调), but I am not sure。
+
+## 升降调
+非常少见。
+表示夸张（哄小孩用的），取笑
+
+## 平调
+非常少见。
+表示没兴趣，无感（拒绝和对方说话的意思）
+
+千万不要不小心用这个，亚洲学生的 yeah/no/I don't care 容易发成平调，容易引起误会。
+
+
+## 提问语调
+### Declarative Questions 陈述性问句
+使用升调。在一个陈述性的句子中，表达提问的意思。因为英语没有类此“吗”的疑问词，所以使用语调来表达。
+You are getting a coffee(升调，陈述性提问)?
+She is going(升调)?
+
+### Yes-No Questions 一般疑问句
+- 一般使用升调；最为普通；Have you finish(从此调核开始上升) it? Are you Chinese(从此调核开始上升)?
+- 降调也很多，表示对答案比较迫切；Is this your first time in London(有点面试场景)?
+- 降升调也很多，表示对结果很好奇； Does she have a boyfriend(这里充分降升调，体现好奇)?
+
+### Alternative Questions 选择疑问句
+前面的选择词使用升调，提示听者叙述没有结束，左后一个选择词使用降调，收尾。
+Would like tea(上升) or(虚词弱读、平调) coffee(下降)?
+Are you coming on Saturday(上升) or(虚词弱读、平调) Sunday(下降)?
+Do you prefer the white(开始上升) one or(虚词弱读、平调) the red(开始下降) one?
+
+### Tag Questions 反问句
+是 陈述句+反问 的结构。陈述句都是降调，反问部分分两种语境：
+- 升调反问，表示不确定，需要询问； These socks are yours, aren't(开始上升) they?
+- 降调反问，表示期待得到同意或确认；You have finished your homework, haven't(开始下降) you?  感觉有点强势，这种语境下回答no会很糟糕。
+
+### Wh-Question 特殊疑问句
+who, what, which, when, where, why or how 开头的疑问句。需要使用降调。
+What time are they arriving(下降)?
+Why did you say that(下降)?
+
+- 也有使用升调疑问的，表示更多善意、感兴趣、更鼓励对方回答；
+What can I do(开始上升) for you? 酒店服务场景常见
+How can I help(开始上升) you?
+Why were you late(上升)? 询问同事为何迟到，使用升调，比较温和；因为我们完全没有责备的意思。
+
+- 有调核直接移动到疑问词的，表示希望对方重复答案；
+Where are you going(下降)? -> I'm off to Mars for the weekend. -> Where(直接从疑问词开始上升) are you going?
+
+## 回答语调
+### 陈述句
+- 默认降调，代表自信、完整。
+It's a good idea(下降).
+
+- 使用降升调，代表话没说完，直到使用降调完成句子；
+First we have a class(降升调) then we go to dinner(下降).
+This is my colleague Wayne(降升调，暗示我还要继续介绍), who is going to handle(开始下降) this.
+
+- 另一方面，降升调也有言外之意的意思，暗示后面会有but～（英国人也不喜欢正面拒绝，也喜欢绕弯子～）
+Who's that? -> Well, I know her face(降升调，暗示我其实不认识她), but I don't know her name.
+Did you like the lecture? -> The seats(降升调，疯狂暗示，这个课不行～) were comfortable.
+How was the restaurant last night? -> I enjoyed the starter(降升调，表示要开始吐槽了) ...
+Is she a good dancer? She's very enthusiastic(降升调，疯狂暗示～没有发问，但是把话说出来了～) ...
+
+- 前半句降调，后半句升调；主要表示前半句意思，后半句请忽略。
+It's inappropriate(降调) I(开始上升) think. 后半句只是缓和一下，反正我就是觉得不合适。
+I'd reject(开始下降) it if(开始上升) I were you. 拒绝吧。后半句完全不用看。
+We will begin(降调) if(开始上升) your're ready. 后半句只是客气一下，本意是无论你是否准备好，我们要开始了。
+
+### 祈使句
+- 降调表示命令；Stop(开始下降) it. Leave me alone(下降).
+- 降升调表示请求；Stop it.(整体降升) Leave me alone(降升). Please(降升). 也可用于和孩子说话，以及撒娇。
+- 升调表示善意、鼓励对方；Go on(上升). Don't worry(上升).  
+
+### 感叹句
+使用降调。
+
+## 社交场合
+
+### 打招呼
+- 默认降调表示礼貌； Hello(降). Good morning(降). How(开始降) do you do?
+- 升调表示自己比较随意，例如早上在办公室和熟悉的同事问候一下；Good morning(升). How(开始升) are you?
+- 升降调表示热情打招呼～ Good morning(升降). How are you doing(升降)?
+
+### 说再见
+- 默认上升；Good bye(略上升). Good night(略上升).
+- 降调略显不友好；Good bye(下降). Good night(下降).
+
+### 请求 please
+- 通常略上升；Could you send(调核实词，开始下降) it please(略上升). Yes(下降) please(略上升). 
+- 平调时表示 “例行公事”，没有特别请求的意思；Quiet(降) please(平). A ticket to London(降) please(平).
+- 降升调，表示肯求，小孩用或者撒娇用；Please(降升).
+
+### 道歉（很多 sorry 不是真的道歉～）
+- 默认使用 降升 调；I do(降) apologise(升). Excuse(降) me(升). I'm sorry(降升). I beg(开始降) your pardon(升).
+- 升调 要求对方重复；Sorry(升). Excuse(开始升) me. Pardon(升). 
+- 高降调，表示生气、勉强；I'm Sorry(从高处猛烈果断快速下降). 其实表示我一点都不 sorry～
+  
+
+## 句子的重音
+句子里只有一个最最重要的重音，称为调核（nucleus），整个句子的语调从调核开始。通常来讲调核必须是个实词。（不绝对，关键是看需要强化表达的信息）
+例如（这个例子比较简单～）：
+
+This is Tom(降调，从调核 Tom 的重读音节开始一直降)
+This is Tom(升调，从调核 Tom 的重读音节开始一直升)
+
+#### 句子里只有一个重音的时候，语调比较好掌握。
+默认模式下，最后一个实词的重读音节为调核；
+或者，使用最新信息相关的一个实词的重读音节。
+另外，一些意向比较“空”（不具体）的词，一般不作调核；eg. things, time, people, place
+
+#### 英音常见语调模式： HAT pattern
+如同一顶帽子，中间高两头低；通过第一个实词把整句的语调拉起来，然后调核再把语调下去。
+It(平调，相对低) was(平调，相对低) earlier(上升，把整个语调拉起来) than(保持语调) I(保持语调) expected(迅速下降)
 
 
 
