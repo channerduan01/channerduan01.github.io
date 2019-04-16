@@ -5,13 +5,13 @@
 
 Official link of it: https://deepmind.com/blog/alphago-zero-learning-scratch/
 
-- No feature engineering
+### No feature engineering
 AlphaGo Zero only uses the black and white stones from the Go board as its input, whereas previous versions of AlphaGo included a small number of hand-engineered features.
 
-- Only one network
+### Only one network
 It uses one neural network rather than two. Earlier versions of AlphaGo used a “policy network” to select the next move to play and a ”value network” to predict the winner of the game from each position. These are combined in AlphaGo Zero, allowing it to be trained and evaluated more efficiently.
 
-- No rollouts for Monte Carlo Tree Search
+### No rollouts for Monte Carlo Tree Search
 AlphaGo Zero does not use “rollouts” - fast, random games used by other Go programs to predict which player will win from the current board position. Instead, it relies on its high quality neural networks to evaluate positions.
 
 
@@ -121,11 +121,11 @@ Alpha Zero 强调 0 先验知识，这里面关键的一点，就是模型不会
 
 样例实现中，会使用当前待训练模型自己与自己对抗，生成训练数据 $(s,\pi,z)$：
 
-- $s$ 为当前局面，实际上就是待输入卷积神经网络的 size=(4,width,height) 的 0/1 二值化局面；对应模型特征
+- $s$ 为当前局面，实际上就是待输入卷积神经网络的 size=(4,width,height) 的 0/1 二值化局面；对应模型特征。这里需要注意，$s$ 是关于当前下棋者的局面状态，双方下棋对局的过程，这块需要适配双方各自的视角，不要把逻辑弄乱了。
 - $pi$ 为当前局面 MCTS 搜索后，实际决策时的走棋概率分布；对应模型策略网络label
 - $z$ 为当前局面下棋方，最后是否获胜 取值为 -1/+1/0；对应模型价值网络label
 
-每一次 train 迭代结束，就会展开一轮自我对抗，生成大约数十个 pair 的训练数据（通过等价局面旋转、对称继续扩充到上百个），加入到 memory 中，然后再从 memory 中随机 sample 出一个 batch 的训练数据来 train。样例中 memory_size=10000（是一个deque，新数据加入会把最旧数据清除）、batch_size=512。
+每一次 train 迭代结束，就会展开一轮自我对抗，生成大约数十个 pair 的训练数据（可以通过等价局面旋转、对称继续扩充到上百个），加入到 memory 中，然后再从 memory 中随机 sample 出一个 batch 的训练数据来 train。样例中 memory_size=10000（是一个deque，新数据加入会把最旧数据清除）、batch_size=512。
 
 这里自我对抗的一个关键点是：模型是进入学习模型，引入更多随机、噪声因素，大大强化 explore，以探索更好的棋路。
 
@@ -150,6 +150,10 @@ Alpha Zero 强调 0 先验知识，这里面关键的一点，就是模型不会
 
 
 
+## Policy Gradient
+
+Alpha Zero 背后的强化学习思想是非常简单朴素的 Policy Gradient：
+经过一轮对弈，如果获胜，则说明我的策略 policy 是正确的，所以对本轮我经历的所有局面，都加强
 
 
 
