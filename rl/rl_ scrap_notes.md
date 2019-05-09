@@ -10,12 +10,15 @@ Where the environment is fully observable, and the current state fully character
 - Partially observable problems can be converted into MDPs
 - Bandits are MDPs with one state
 
-It is really fundamental.
+It is really fundamental. There are 2 sides Agent and Environment with 3 connections Environment states $s \in S$, Agent actions $a \in A$ and Rewards $r \in R$.
 
-### Markov Property
+
+
+### Markov Assumption/Property
 The future is independent of the past given the present. (That is sort of philosophy~)
 The current state is a sufficient statistic of the future.
-$P[S_{t+1}|S_t] = P[S_{t+1}|S_1,S_2,...,S_t]$
+$$P[S_{t+1}|S_t] = P[S_{t+1}|S_1,S_2,...,S_t]$$
+$$P[s_{t+1},r_{t+1}|s_t,a_t] = P[s_{t+1},r_{t+1}|s_0,a_0,r_1,...,s_t,a_t]$$
 
 Only needs to care the current state that captures all relevant information from history. Please throw away the past~ 
 

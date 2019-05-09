@@ -2,23 +2,39 @@
 
 The core of Reinforcement Learning is Science of Desicion Making.
 
-
 Reinforcement learning is an attempt to model a complex probability distribution of rewards in relation to a very large number of state-action pairs. This is one reason reinforcement learning is paired with, say, a Markov decision process, a method to sample from a complex distribution to infer its properties.
-
 
 Recommended Textbook:
 Algorithms for Reinforcement Learning, Szepesvari
 
-Recommende wiki:
-https://skymind.ai/wiki/deep-reinforcement-learning
+[Recommended wiki]
+(https://skymind.ai/wiki/deep-reinforcement-learning)
+
+[Recommended Course on Youtube]
+(https://www.youtube.com/watch?v=2pWv7GOvuf0&list=PL7-jPKtc4r78-wCZcQn5IqyuWhBZ8fOxT&index=2&t=0s)
+
+#### There is a simple comparison:
+
+| | Supervised learning | Reinforcement learning | Unsupervised learning |
+| ------ | ------ | ------ | ------ |
+| Target | Learning to approximate reference answers | Learning optimal strategy by trial and error | Learning underlying data structure |
+| Label | Needs correct answers | Needs feedback on agent's own actions | No feedback required |
+| Affect | Model does not affect the input data | Agent can affect it's own observations | Model does not affect the input data |
 
 
-**The difference to Supervised Learning**
+**The difference to Supervised Learning**:
 
 - There is no supervisor, only a reward signal
 - Feedback is delayed, not instantaneous
 - Time really matters (sequential, non i.i.d data)
 - Agent's actions affect the subsequent data it receives!
+
+
+### Markov decision process
+The problem format of RL.
+
+### Bellman expectation equation
+The heart of RL. It is about Dynamic Programing.
 
 
 ## Q-learning
@@ -33,7 +49,7 @@ Implementing the RL(reinforcement-learning) algorithm commonly requires 3 primar
 
 Q-learning is an approach to solving reinforcement learning whereby you develop an algorithm to approximate the utility function (Q-function).
 Once you got Q-function, the **policy** is really simple: 
-$$Policy(s)=argmax\ Q(s,a)$$
+$$\pi(s)=argmax_a\ Q(s,a)$$
 
 Thus the core of Q-learning is how to define and learn the Q-function.
 
@@ -70,8 +86,8 @@ The key update process is:
 $$Q(s,a) = Q(s,a) + \eta[r+\gamma max_{a'} Q(s',a') - Q(s,a)]$$
 
 - $\eta$ is learning rate and $\gamma$ is discount factor
-- **the predict Q** is "$Q(s,a)$", which predict value made by last Q-function (and we just about to optimize it)
-- **the real Q** is "$r+\gamma max_{a'} Q(s',a')$", which is the learning target ("label")
+- **the predict Q** is " $Q(s,a)$ ", which predict value made by last Q-function (and we just about to optimize it)
+- **the real Q** is " $r+\gamma max_{a'} Q(s',a')$ ", which is the learning target ("label")
 
 **Notice**: the infer step("Choose a from s") commonly combined with epsilon-greedy(commonly 90% greedily choose best with 10% random) to random choose an action. It is the balance of explore & exploit.
 
@@ -142,7 +158,7 @@ It can be changed from **Onestep-Update** to **Round-Update** easily by moving "
 ## DQN (Deep Q-Network)
 #### 1. Combination of Q-learning with deep learning.
 
-The traditional Q-learning can not hold unlimited states and actions in Q-table, and all the pairs of (state,action) is separated(as a cell in Q-table). Then Neural Network is introduced to replace Q-table. Which processes the raw features(using some skills like CNN/RNN) and learns underlying patterns with limited parameters and get better generalization.
+The traditional Q-learning can not hold unlimited states and actions in Q-table, and all the pairs of (state,action) is separated(as a cell in Q-table). Then Neural Network is introduced to replace Q-table. Which processes the raw features(using some skills like CNN/RNN) and learns underlying patterns with limited parameters and gets better generalization.
 
 For Network of DQN model, there are 2 styles to replace Q-table:
 
@@ -157,7 +173,7 @@ If you really want to train a DQN model, these 2 tricks below are inevitable.
 #### Experience replay
 Q-learning is off-policy and can learn from current experience, old experience and others experience.
 
-For DQN, it maintains a responsitory of experience(train data), so the model can be trained on a large set of experience repeatedly. Besides, it randomly sample and replay(train) on each iteration, and the random sampling breaks the dependency of experience and makes Neural Network learn and converge more efficent.
+For DQN, it maintains a repository of experience(train data), so the model can be trained on a large set of experience repeatedly. Besides, it randomly sample and replay(train) on each iteration, and the random sampling breaks the dependency of experience and makes Neural Network learn and converge more efficent.
 
 The common format of train data is tuples as "(state, action, reward, next_state)":
 
@@ -223,14 +239,14 @@ It aims to solve the overestimating problem of DQN: the predict Q-value is highe
 #### Overestimated Problem of DQN
 
 **The real Q** (label) is: 
-$$r+ \gamma  max_{a'} Q(s',a';\theta')$$
+$$y_{target}^{(DQN)} = r+ \gamma  max_{a'} Q(s',a';\theta')$$
 
 "$Q(s',a';\theta')$" is estimated by model which contains error, and that "max" operation maximizes the error. **The real Q** (label) itself is overestimated, which makes **the predict Q** "$Q(s,a;\theta)$" also overestimated after training.
 
 #### Solution - Double DQN
 
 Changes **the real Q** (label) as: 
-$$r+ \gamma Q(s', \arg \max_{a'}Q(s',a';\theta);\theta')$$
+$$y_{target}^{(Double-DQN)} = r+ \gamma Q(s', \arg \max_{a'}Q(s',a';\theta);\theta')$$
 
 Which is now estimated by both Neural Network $\theta$ and $\theta'$. The former one computes the action with max Q, then the latter one directly computes **the real Q**.
 
@@ -240,7 +256,7 @@ In pratice, this method gives better(lower) predict Q-value.
 
 For the Experience replay of DQN, unifom random sample is just the baseline. The memory may have different priority/importance which gives different amount of informantion. Some prioritized replay strategies could dramatically speed up training process.
 
-#### TD-error
+#### TD-error (Tempral-Difference-error)
 Defines the priority/importance of a sample.
 $$TD_{err} = |r+\gamma max_{a'} Q(s',a';\theta') - Q(s,a;\theta)|$$
 
@@ -298,7 +314,7 @@ $$Q(s,a) = V(s,\theta)+A(s,a,\theta)$$
 The common DQN model mentioned above(1~6) uses NN model to directly predict the Q-value for each action $a$ of some state $s$. However, dueling DQN assumes that Q-value is the sum of 2 parts:
 
 - $V(s,\theta)$ is value of this state $s$ itself.
-- $A(s,a,\theta)$ is advantage of some action $a$ for $s$
+- $A(s,a,\theta)$ is advantage of some action $a$ for the $s$
 
 And these 2 parts are outputs of the same NN model that share layers of feature extract. It makes the model more sensitive to different actions and converge faster.
 
@@ -309,3 +325,8 @@ In practice, the NN model's output $A(s,a,\theta)$ may take over $V(s,\theta)$. 
 $$Q(s,a) = V(s,\theta)+(A(s,a,\theta)-AVG(all\ A(s,a',\theta)))$$
 
 It forces the $A()$ part to be really advantage/increment from this state.
+
+### 8. Soft Replacement
+It is a simple trick.
+
+Just slightly changes(may by 1%) the target NN-model after every iteration of training rather than wait a long time for hard replacement/sync.
