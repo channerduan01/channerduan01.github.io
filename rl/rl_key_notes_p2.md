@@ -30,10 +30,14 @@ end function
 The "update theta" is below (round update):
 $$\theta = \theta +\alpha \nabla_{\theta}(log\pi_{\theta}(s_t,a_t)v_t)\\\ v_t=normalize(r_t)\ on\ all\ {r_1,r_2,...}$$
 
+Actually, the loss function is:
+
+$$loss = -log\pi_{\theta}(s_t,a_t)v_t$$
+
 - $\theta$ are the parameters of NN model
 - $\alpha$ is just the learning rate
-- $\pi_{\theta}(s_t,a_t)$ is the model/policy's predict probability $\in(0,1)$ of the policy to take action $a_t$ for state $s_t$ (it is the value of probability density function for Gaussian Policy)
-- $v_t$ is the weight of the sample(can be pos or negtive). It is actually the normalized reward for one episode(a whole round of a game).
+- $\pi_{\theta}(s_t,a_t)$ is the model/policy's predict probability $\in(0,1)$ of the policy to take action $a_t$ for state $s_t$
+- $v_t$ is the utility value and which is also the weight of the sample(can be positive or negative). It is actually the normalized reward calculated for one episode(a whole round of a game).
 
 #### 1.1 model output
 **For Softmax Policy**: it is still a NN model like the one of DQN for discrete actions, and the only difference is one more **Softmax** layer on output. Thus the output of this model $\pi_{\theta}(s_t,a_t)$ is a discrete probability distribution of actions.
