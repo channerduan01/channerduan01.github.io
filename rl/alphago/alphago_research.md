@@ -69,7 +69,7 @@ UCB 公式：$v_i+C*\sqrt{lnN/n_i}$，让算法关注胜率更高，或者结论
 
 ### 节点评估
 这里使用了类似 UCB 的公式，最大不同是引入了 prior 来直接影响下一步局面的展开方向。
-$Score = q + C*prior*\sqrt{N/1+n}$
+$Score = q + C*prior*\sqrt{N/(1+n)}$
 
 - $q$ 是当前节点的价值（局面本身打分）；初始值为 0 ，是使用公式：$q = q + (value_{leaf} - q)/n$ 来更新的（即每次相关子节点搜索结束后的 Backprogagtion 过程，$value_{leaf}$ 是子节点的局面价值）
 - $n$ 是当前节点的访问次数
@@ -87,8 +87,9 @@ $Score = q + C*prior*\sqrt{N/1+n}$
 ## 3. Alpha Zero 相关 nn-structure
 ### input
 网络结构上，使用原始棋局的 0/1 二值化局面直接输入，基本上没有其他先验知识和特征工程。
-Alpha Zero 使用了 17 个 19*19 的平面来描述局面：
-- 2*8个平面描述双方最近8步的棋子情况
+Alpha Zero 使用了 17 个$19*19$的平面来描述局面：
+
+- $2*8$个平面描述双方最近8步的棋子情况
 - 最后1个平面描述是否先手；先手则整个平面全为 1，否则全为 0
 
 ### nn
@@ -99,8 +100,7 @@ Alpha Zero 使用了 17 个 19*19 的平面来描述局面：
 - evaluation network 价值网络；对卷积后特征同样降维（样例中降到 2-channel），然后拉平并通过 ->64->1 2级全链接网络输出单个值，使用 tanh 变化到 (-1,1) 和 label 的对局 负=-1/胜=+1 对应，即表征当前局面的价值。
 
 ### 损失函数
-$$loss = loss_{evaluate}+loss_{policy}+regularizer\\
-= (z-v)^2-\pi^T\log{p}+c||\theta||^2$$
+$$loss = loss_{evaluate}+loss_{policy}+regularizer = (z-v)^2-\pi^T\log{p}+c||\theta||^2$$
 
 loss 分三部分构成，evaluation 和 policy 两部分的误差可以看作是同权重的 Multiple Task Learning：
 
