@@ -3,7 +3,7 @@
 """
 Created on Wed May 22 08:58:23 2019
 
-Tensorflow keras tutorial - Basic classification
+Tensorflow keras tutorial - Image classification
 
 Reference:
 1. tf official tutorial
@@ -32,6 +32,7 @@ from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Requires at least tf-version: 1.11.0
 print("tf-version:", tf.__version__)
 
 
@@ -51,7 +52,8 @@ print("test_labels.shape:", test_labels.shape)
 
 
 #%% Some visualization
-idx_image = 25
+idx_image = 40
+plt.figure(figsize=(2,2))
 plt.axis("off")
 plt.title('type: %s' %class_names[train_labels[idx_image]])
 plt.imshow(train_images[idx_image], cmap=plt.cm.binary)
@@ -114,6 +116,7 @@ predict_dist = model.predict(np.expand_dims(test_images[idx_test_image],0))
 predicted_label = np.argmax(predict_dist)
 true_label = test_labels[idx_test_image]
 # show the case
+plt.figure(figsize=(2,2))
 plt.axis("off")
 plt.title('predict_type: %s, actual: %s' %(class_names[predicted_label], class_names[true_label]))
 plt.imshow(test_images[idx_test_image], cmap=plt.cm.binary)
