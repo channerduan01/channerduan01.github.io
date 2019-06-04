@@ -130,7 +130,7 @@ An improvement model proposed by Google DeepMind **for modeling continuous actio
 The update/learn of **the predict Actor** is:
 $$\nabla_{\theta_{\mu}}J \approx \frac{1}{N}\sum_{i} \nabla_{a} Q(s,a|\theta_{Q})|_{s=s_i,a=\mu(s_i)}\nabla_{\theta_{\mu}}\mu(s|\theta_{\mu})|_{s=s_i}$$
 
-It is actually a chain rule that directly deliverys the gradient(information) from Critic(Q-function) to the parameters of Actor NN-model. It encourages the Actor to get better Critic. 
+It is actually a chain rule that directly deliveries the gradient(information) from Critic(Q-function) to the parameters of Actor NN-model. It encourages the Actor to get better Critic. 
 
 The update/learn of **the predict Critic** is:
 $$y_i=r_i+\gamma Q'(s_{i+1},a_{i+1}=\mu'(s_{i+1}|\theta_{\mu'})|\theta_{Q'})\\\nabla_{\theta_{Q}}J = \frac{1}{N}\sum_i(y_i-Q(s_i,a_i|\theta_{Q}))^2$$
