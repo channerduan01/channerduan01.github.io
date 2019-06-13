@@ -131,7 +131,7 @@ RNN block also can be stacked. It is very hard to train thus usually within 3 la
 ## 2. RNN for Language Model
 **The core is: predict the probability of a sentence.**
 
-Actually, it is a basic component to support OCR, Speech Regnition, Machine Translation and etc. Because it judges which answer is most possible.
+Actually, it is a basic component to support OCR, Speech Recognition, Machine Translation and etc. Because it judges which answer is most possible.
 
 We commonly use word-level model, but character-level model is also possible in the future.
 (character-level is a lot harder to capture dependency because the sequence is longer, and it requires more computation)
