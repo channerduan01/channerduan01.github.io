@@ -136,6 +136,13 @@ def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
   ])
   return model
 
+#%%
+
+
+
+
+# %%
+# Really build the model
 model = build_model(
   vocab_size = len(vocab), 
   embedding_dim=embedding_dim, 
@@ -143,7 +150,6 @@ model = build_model(
   batch_size=BATCH_SIZE)
 
 
-# %%
 # Check the Model
 for input_example_batch, target_example_batch in dataset.take(1): 
   example_batch_predictions = model(input_example_batch)
@@ -166,7 +172,8 @@ model.compile(
     loss = loss)
 
 # Directory where the checkpoints will be saved
-checkpoint_dir = './training_checkpoints/text_generation'
+checkpoint_dir = 'X:/mygits/channerduan01.github.io/deep_learning/training_checkpoints/text_generation'
+
 # Name of the checkpoint files
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
 
@@ -174,7 +181,7 @@ checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
     filepath=checkpoint_prefix,
     save_weights_only=True)
 
-EPOCHS=3
+EPOCHS=30
 
 history = model.fit(dataset.repeat(), epochs=EPOCHS, steps_per_epoch=steps_per_epoch, callbacks=[checkpoint_callback])
 
@@ -182,6 +189,9 @@ history = model.fit(dataset.repeat(), epochs=EPOCHS, steps_per_epoch=steps_per_e
 
 # %%
 # reload model
+# Directory where the checkpoints will be saved
+checkpoint_dir = 'X:/mygits/channerduan01.github.io/deep_learning/training_checkpoints/text_generation'
+
 print("checkpoint:", tf.train.latest_checkpoint(checkpoint_dir))
 
 model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1)
@@ -199,7 +209,7 @@ def generate_text(model, start_string):
   # Evaluation step (generating text using the learned model)
 
   # Number of characters to generate
-  num_generate = 1000
+  num_generate = 100
 
   # Converting our start string to numbers (vectorizing) 
   input_eval = [char2idx[s] for s in start_string]
@@ -216,6 +226,7 @@ def generate_text(model, start_string):
   # Here batch size == 1
   model.reset_states()
   for i in range(num_generate):
+      print("input_eval:",input_eval)
       predictions = model(input_eval)
       # remove the batch dimension
       predictions = tf.squeeze(predictions, 0)
@@ -227,6 +238,7 @@ def generate_text(model, start_string):
       # We pass the predicted word as the next input to the model
       # along with the previous hidden state
       input_eval = tf.expand_dims([predicted_id], 0)
+      print("predicted_id:",predicted_id,"->",idx2char[predicted_id])
       
       text_generated.append(idx2char[predicted_id])
 
