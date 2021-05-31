@@ -13,6 +13,10 @@ https://www.tensorflow.org/tutorials/sequences/text_generation
 @author: channerduan
 """
 
+#%%
+
+len([1,2])
+
 
 # %%
 # Define the dependency
@@ -79,6 +83,7 @@ def split_input_target(chunk):
 
 dataset = sequences.map(split_input_target)
 
+print("")
 
 # %%
 # Build the training dataset
@@ -136,11 +141,6 @@ def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
   ])
   return model
 
-#%%
-
-
-
-
 # %%
 # Really build the model
 model = build_model(
@@ -161,7 +161,7 @@ model.summary()
 # %%
 # Train the Model
 def loss(labels, logits):
-  return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+  return tf.keras.losses.sparse_categorical_crossentropy(labels, logits)
 
 example_batch_loss  = loss(target_example_batch, example_batch_predictions)
 print("Prediction shape: ", example_batch_predictions.shape, " # (batch_size, sequence_length, vocab_size)") 
@@ -172,7 +172,7 @@ model.compile(
     loss = loss)
 
 # Directory where the checkpoints will be saved
-checkpoint_dir = 'X:/mygits/channerduan01.github.io/deep_learning/training_checkpoints/text_generation'
+checkpoint_dir = './training_checkpoints/text_generation'
 
 # Name of the checkpoint files
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
@@ -181,16 +181,52 @@ checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
     filepath=checkpoint_prefix,
     save_weights_only=True)
 
-EPOCHS=30
+#EPOCHS=30
 
-history = model.fit(dataset.repeat(), epochs=EPOCHS, steps_per_epoch=steps_per_epoch, callbacks=[checkpoint_callback])
+#history = model.fit(dataset.repeat(), epochs=EPOCHS, steps_per_epoch=steps_per_epoch, callbacks=[checkpoint_callback])
 
+
+#%%
+# Training step
+EPOCHS = 1
+
+optimizer = tf.train.AdamOptimizer()
+
+for epoch in range(EPOCHS):
+    start = time.time()
+    
+    # initializing the hidden state at the start of every epoch
+    # initally hidden is None
+    hidden = model.reset_states()
+    
+    for (batch_n, (inp, target)) in enumerate(dataset):
+          with tf.GradientTape() as tape:
+              # feeding the hidden state back into the model
+              # This is the interesting step
+              predictions = model(inp)
+              loss = tf.losses.sparse_softmax_cross_entropy(target, predictions)
+              
+          grads = tape.gradient(loss, model.trainable_variables)
+          optimizer.apply_gradients(zip(grads, model.trainable_variables))
+
+          if batch_n % 20 == 0:
+              template = 'Epoch {} Batch {} Loss {:.4f}'
+              print(template.format(epoch+1, batch_n, loss))
+
+    # saving (checkpoint) the model every 5 epochs
+    if (epoch + 1) % 5 == 0:
+      model.save_weights(checkpoint_prefix.format(epoch=epoch))
+
+    print ('Epoch {} Loss {:.4f}'.format(epoch+1, loss))
+    print ('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
+
+model.save_weights(checkpoint_prefix.format(epoch=epoch))
 
 
 # %%
 # reload model
 # Directory where the checkpoints will be saved
-checkpoint_dir = 'X:/mygits/channerduan01.github.io/deep_learning/training_checkpoints/text_generation'
+checkpoint_dir = './training_checkpoints/text_generation'
 
 print("checkpoint:", tf.train.latest_checkpoint(checkpoint_dir))
 

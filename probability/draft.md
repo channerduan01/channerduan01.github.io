@@ -26,39 +26,3 @@
 则级联 $a$ 可以找到 $\min_{n}{a^n>b}$；设 $l=floor(a^n/b)$，当 $a^n$ 产生的随机数大于 $bl$ 时需要重新产生，否则直接输出 $a^n\ mod\ b$ 即可；一次性产出结果概率为 $\frac{bl}{a^n}$
 
 
-
-select * from scores where arbiter_id not in (
-    select
-      arbiter_id
-    from (
-        select
-          arbiter_id,
-          count(*) as nu
-        from (
-            select arbiter_id from scores where first_criterion in (
-              select max(first_criterion) from scores
-            ) union all
-            select arbiter_id from scores where first_criterion in (
-              select min(first_criterion) from scores
-            ) union all
-            select arbiter_id from scores where second_criterion in (
-              select max(second_criterion) from scores
-            ) union all
-            select arbiter_id from scores where second_criterion in (
-              select min(second_criterion) from scores
-            ) union all
-            select arbiter_id from scores where third_criterion in (
-              select max(third_criterion) from scores
-            ) union all
-            select arbiter_id from scores where third_criterion in (
-              select min(third_criterion) from scores
-            )
-        ) A
-        group by arbiter_id
-    ) B
-    where nu>=2
-);
-
-
-
-
