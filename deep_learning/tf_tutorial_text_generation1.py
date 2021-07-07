@@ -51,6 +51,26 @@ for i, sentence in enumerate(sentences):
     y[i, char_indices[next_chars[i]]] = 1
 
 
+
+#%%
+
+print("x:",x.shape,"y:",y.shape)
+
+
+
+
+#%%
+    
+    
+    
+    
+#%%
+    
+    
+    
+    
+#%%
+    
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()

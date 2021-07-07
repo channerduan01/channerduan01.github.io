@@ -164,7 +164,7 @@ $$Pr[Y = 1|A = 1] = Pr[Y^a = 1|A = 1]= Pr[Y^a = 1]\\Pr[Y = 0|A = 0] = Pr[Y^a = 0
 - 干预组 事前 结果 $P1$
 - 干预组 事后 结果 $P2$；这是唯一受干预影响的数据，引入 反现实结果 counterfacul outcome，假设无干预情况下会观察到 $Q$
 
-再引入 **平行趋势假设 parallel trend assumption**：对照组、干预组的天然差异（conterfactual）是不变的，事前、事后都一致，即 $S2-S1=Q-P1$。
+再引入 **平行趋势假设 parallel trend assumption**：对照组、干预组的天然差异（conterfactual）是不变的，事前、事后都一致，即 $P1-S1=Q-S2$。
 
 此情况下，干预带来的结果变化记为：$P2-Q=(P2-S2)-(P1-S1)$；这称为双重差分或两期面板模型，示意图如下（取自 wiki）：
 
