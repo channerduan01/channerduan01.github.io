@@ -4,4 +4,6 @@
 *.pyc
 *.out
 *.local
-
+*.gz
+*.tar.gz
+checkpoint
